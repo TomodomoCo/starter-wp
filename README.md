@@ -40,9 +40,10 @@ There are a few things you'll need to do to get started.
 2.  Run `git clone git://github.com/vanpattenmedia/wpframe.git projectname && cd projectname && rm -rf .git` to prepare your project directory
 3.  Run `gem install bundler` to install [Bundler](http://gembundler.com/), then `bundle install` to install the required Ruby dependencies
 4.  Edit the [Vagrantfile](https://github.com/vanpattenmedia/wpframe/blob/master/Vagrantfile) to use your own [box](https://github.com/vanpattenmedia/wpframe/blob/master/Vagrantfile#L5). There are some available at [VagrantBox.es](http://www.vagrantbox.es/).
-5.  `git init && git commit -am 'Initial commit'` - get this puppy in version control again.
-6.  `mv config/project.example.yml config/project.yml` and edit the result to use your project's info (you may not have a repo yet; that's okay, you don't need it until you deploy to a remote)
+5.  `mv config/project.example.yml config/project.yml` and edit the result to use your project's info (you may not have a repo yet; that's okay, you don't need it until you deploy to a remote)
+6.  `git init && git commit -am 'Initial commit'` - get this puppy in version control again.
 7.  `mv config/database.example.yml config/database.yml` and add in some new DB credentials. Keep in mind these are **new** credentials - Puppet will generate new databases and users based on what you set here. The databases _should not exist_.
+    *   **Important:** Double check to make sure that your database.yml file isn't being included in version control before you make your next commit. You want these credentials to be private.
 8.  Edit your hosts file to point `dev.yourdomain.com` to the IP set in the Vagrantfile
 9.  `vagrant up` - launch Vagrant!
 10.  Visit [http://dev.yourdomain.com/wp/] to complete WordPress setup. You may need to manually edit the database to use the /wp/ as admin convention.
