@@ -58,6 +58,8 @@ There are a few things you'll need to do to get started.
 
 Enjoy!
 
+- - -
+
 ### Special thanks to
 
 *   [Mark Jaquith](http://markjaquith.com/)
