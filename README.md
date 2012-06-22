@@ -48,11 +48,11 @@ There are a few things you'll need to do to get started.
 #### Staging and production
 
 1.  Make sure your remote server has SSH key access set up, and that your deploy user has sudo access
-2.  Make sure you have a Git repo in place by now.
+2.  Make sure you have a Git repo in place by now in config/project.yml
 3.  Run `cap staging deploy:setup`
 4.  If everything runs without error, run `cap staging deploy` to execute a deploy
 5.  You can reprovision at any time with `cap staging puppet:show`
-6.  To setup/deploy/reprovision on production, follow the same steps, but replace "`staging`" with "`production`".
+6.  To setup/deploy/reprovision on production, follow the same steps, but replace `staging` with `production`
 
 Enjoy!
 
