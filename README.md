@@ -8,7 +8,7 @@ It uses the following technologies:
 *   Capistrano
 *   Vagrant
 *   Compass
-*   And a whole lotta Git and YAML
+*   And a whole lotta Git and YAML (via Symfony YAML)
 
 It assumes a lot about the set up of your development process and servers. For example...
 
@@ -30,9 +30,21 @@ Thanks!
 [Chris Van Patten](https://github.com/chrisvanpatten) and [Peter Upfold](https://github.com/PeterUpfold)<br>
 (The [Van Patten Media](http://www.vanpattenmedia.com/) Team)
 
+### Special thanks to
+
+*   [Mark Jaquith](http://markjaquith.com/)
+    *   For inspiring bits of this project (and its release) with his [Skeleton Repo](https://github.com/markjaquith/WordPress-Skeleton)
+    *   For making sure WordPress has a [Git mirror](github.com/wordpress/wordpress) on Github
+*   The various projects we use to make this a reality, including
+    *   [Puppet](http://puppetlabs.com/)
+    *   [Capistrano](https://github.com/capistrano/capistrano)
+    *   [Vagrant](http://vagrantup.com/)
+    *   [Symfony YAML](http://symfony.com/doc/current/components/yaml.html)
+    *   [WordPress](http://www.wordpress.org/)
+
 ### License
 
-**Copyright &copy; 2012, Van Patten Media.**
+**Copyright &copy; 2012, [Van Patten Media](http://www.vanpattenmedia.com/).**
 
 All rights reserved.
 
