@@ -1,0 +1,236 @@
+# Make variables available to the ERB files that Puppet will render
+$app_stage     = "<%= app_stage %>"
+$app_domain    = "<%= app_domain %>"
+$app_deploy_to = "<%= app_deploy_to %>"
+$app_theme     = "<%= app_theme %>"
+$app_name      = "<%= app_name %>"
+$app_user      = "<%= app_user %>"
+$app_group     = "<%= app_group %>"
+
+<%
+if app_stage == "dev"
+  erb_path = "#{app_deploy_to}/current/config/puppet/templates"
+else
+  erb_path = "/home/deploy/tmp/#{app_name}/#{app_stage}/templates"
+end
+%>
+
+package { "nginx":
+	ensure => latest,
+#	hasrestart => true
+}
+
+package { "php5-fpm":
+	ensure => latest
+}
+
+package { "varnish":
+	ensure => latest
+}
+
+<% if app_stage == "dev" %>
+file { "/etc/resolv.conf":
+	owner => root,
+	group => root,
+	mode => 644,
+	source => "<%= app_deploy_to %>/current/config/puppet/files/vagrant_resolv.conf"
+}
+<% end %>
+
+file { "/etc/nginx/sites-available/<%= app_name %>-<%= app_stage %>":
+	owner => root,
+	group => root,
+	mode  => 644,
+	content => template("<%= erb_path %>/nginx.erb"),
+	require => Package["nginx"],
+	notify => Service["nginx"]
+}
+
+file { "/etc/nginx/sites-enabled/<%= app_name %>-<%= app_stage %>":
+	ensure => symlink,
+	target => "/etc/nginx/sites-available/<%= app_name %>-<%= app_stage %>",
+	require => Package["nginx"],
+	notify => Service["nginx"]
+}
+
+file { "/etc/nginx/sites-enabled/default":
+	ensure => absent,
+	#require => Package["nginx"],
+	#notify => Package["nginx"]
+}
+
+group { "<%= app_user %>-homerw":
+	ensure => present,
+}
+
+group { "<%= app_group %>":
+	ensure => present,
+}
+
+user { "www-data":
+	ensure => present,
+	groups => ["<%= app_user %>-homerw"],
+	membership => minimum,
+}
+
+user { "peter":
+	ensure => present,
+	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
+	membership => minimum,
+}
+
+user { "chris":
+	ensure => present,
+	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
+	membership => minimum,
+}
+
+user { "deploy":
+	ensure => present,
+	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
+	membership => minimum,
+}
+
+<% if app_stage == "dev" %>
+user { "vagrant":
+	ensure => present,
+	gid => "<%= app_user %>",
+	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
+	membership => minimum,
+}
+
+file { "/home/<%= app_user %>":
+	ensure => directory,
+	owner => vagrant,
+	group => vagrant-homerw,
+	mode => 755,
+}
+<% else %>
+user { "<%= app_user %>":
+	ensure => present,
+	gid => "<%= app_group %>",
+	groups => ["www-php-loggers","<%= app_user %>-homerw"],
+	membership => minimum,
+	password => "*", # disable password-based logins entirely
+}
+
+file { "/home/<%= app_user %>":
+	ensure => directory,
+	owner => <%= app_user %>,
+	group => <%= app_user %>-homerw,
+	mode => 770,
+}
+<% end %>
+
+file { "/home/<%= app_user %>/php":
+	ensure => directory,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	require => Package["php5-fpm"]
+}
+
+file { "/home/<%= app_user %>/php/log":
+	ensure => directory,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	require => Package["php5-fpm"]
+}
+
+file { "/home/<%= app_user %>/php/sessions":
+	ensure => directory,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	require => Package["php5-fpm"]
+}
+
+file { "/home/<%= app_user %>/php/log/<%= app_name %>.access.log":
+	ensure => file,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	require => Package["php5-fpm"]
+}
+
+file { "/home/<%= app_user %>/php/log/<%= app_name %>.slow.log":
+	ensure => file,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	require => Package["php5-fpm"]
+}
+
+file { "/home/<%= app_user %>/php/log/error.log":
+	ensure => file,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	require => Package["php5-fpm"]
+}
+
+# pool must be after the files it depends on above
+file { "/etc/php5/fpm/pool.d/<%= app_name %>.pool.conf":
+	owner => root,
+	group => root,
+	mode => 644,
+	content => template("<%= erb_path %>/php5-fpm.pool.conf.erb"),
+	#require => Package["php5-fpm"],
+	#notify => Package["php5-fpm"]
+}
+
+<% if app_stage == "dev" %>
+# varnish config file for :80
+file { "/etc/default/varnish":
+	owner => root,
+	group => root,
+	source => "<%= app_deploy_to %>/current/config/puppet/files/vagrant_etc_default_varnish",
+	require => Package["varnish"]
+}
+
+file { "/etc/varnish/default.vcl":
+	owner => root,
+	group => root,
+	source => "<%= app_deploy_to %>/current/config/puppet/files/vagrant_default.vcl",
+	require => Package["varnish"]
+}
+<% end %>
+
+define mysqldb( $user, $password, $host, $grant_to ) {
+	exec { "create-${name}-db":
+		unless => $app_stage ? {
+			'dev'   => "/usr/bin/mysql -u${user} -pvagrant ${name}",
+			default => "/usr/bin/mysql --ssl -h ${db_host} ${name}",
+		},
+		command => $app_stage ? {
+			'dev'   => "/usr/bin/mysql -uroot -pvagrant -e \"CREATE DATABASE ${name}; GRANT ALL ON ${name}.* TO ${user}@localhost IDENTIFIED BY '$password';\"",
+			default => "/usr/bin/mysql --ssl -h ${host} -e \"CREATE DATABASE ${name}; GRANT ALL ON ${name}.* TO ${user}@${grant_to} IDENTIFIED BY '$password' REQUIRE SSL;\"",
+			require => Service["mysqld"],
+		},
+	}
+}
+
+# set up database
+mysqldb { "<%= db_name %>":
+	user => "<%= db_user %>",
+	password => "<%= db_password %>",
+	host => "<%= db_host %>",
+	grant_to => "<%= db_grant_to %>",
+}
+
+service { "nginx":
+	ensure => running,
+	#hasrestart => true,
+	require => Package["nginx"]
+}
+
+service { "php5-fpm":
+	ensure => running,
+	#hasrestart => true,
+	subscribe => [File["/etc/php5/fpm/pool.d/<%= app_name %>.pool.conf"],File["/home/<%= app_user %>/php/log"]],
+	require => Package["php5-fpm"]
+}
+
+# start varnish
+service { "varnish":
+	ensure => running,
+	require => Package["varnish"],
+	<% if app_stage == "dev" %>
+	subscribe => [File["/etc/default/varnish"],File["/etc/varnish/default.vcl"]],
+	<% end %>
+}

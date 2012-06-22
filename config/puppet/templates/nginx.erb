@@ -1,0 +1,129 @@
+<% if app_stage == "production" %>
+# Redirect to www.*
+server {
+	listen 8080;
+	server_name <%= app_domain %>;
+	rewrite ^ $scheme://www.<%= app_domain %>$request_uri permanent;
+}
+<% end %>
+
+server {
+	error_log /var/log/nginx/error.log notice;
+	#rewrite_log on;
+
+	listen 8080;
+
+	root <%= app_deploy_to %>/current/public;
+
+	index index.php index.html index.htm;
+
+	<% if app_stage == "production" %>
+	server_name www.<%= app_domain %>;
+	<% else %>
+	server_name <%= app_domain %>;
+	<% end %>
+
+	sendfile off; # avoid sendfile issues with sending stale files in virtual environments
+
+	location / {
+		# if you're just using wordpress and don't want extra rewrites
+		# then replace the word @rewrites with /index.php
+		try_files $uri $uri/ @rewrites;
+	}
+
+	location @rewrites {
+		# Can put some of your own rewrite rules in here
+		# for example rewrite ^/~(.*)/(.*)/? /users/$1/$2 last;
+		# If nothing matches we'll just send it to /index.php
+		rewrite ^/css/(.*)$ /content/themes/<%= app_theme %>/css/$1 last;
+		rewrite ^/js/(.*)$ /content/themes/<%= app_theme %>/js/$1 last;
+
+		rewrite ^/img/(.*)$ /content/themes/<%= app_theme %>/img/$1 last;
+		rewrite ^/plugins/(.*)$ /content/plugins/$1 last;
+		rewrite ^/fonts/(.*)$ /content/themes/<%= app_theme %>/fonts/$1 last;
+
+		rewrite ^ /index.php last;
+	}
+
+	# This block will catch static file requests, such as images, css, js
+	# The ?: prefix is a 'non-capturing' mark, meaning we do not require
+	# the pattern to be captured into $1 which should help improve performance
+	location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+		rewrite ^/css/(.*)$ /content/themes/<%= app_theme %>/css/$1 last;
+		rewrite ^/js/(.*)$ /content/themes/<%= app_theme %>/js/$1 last;
+		rewrite ^/img/(.*)$ /content/themes/<%= app_theme %>/img/$1 last;
+		rewrite ^/fonts/(.*)$ /content/themes/<%= app_theme %>/fonts/$1 last;
+		rewrite ^/plugins/(.*)$ /content/plugins/$1 last;
+
+		# Some basic cache-control for static files to be sent to the browser
+		<% if app_stage == "production" %>
+		expires 8h;
+		add_header Pragma public;
+		add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+		<% elseif app_stage == "staging" %>
+		expires 1h;
+		add_header Pragma public;
+		add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+		<% else %>
+		expires 0m;
+		add_header Pragma no-cache;
+		add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
+		<% end %>
+	}
+
+	#error_page 404 /404.html;
+
+	# redirect server error pages to the static page /50x.html
+	#
+	#error_page 500 502 503 504 /50x.html;
+	#location = /50x.html {
+	#   root /usr/share/nginx/www;
+	#}
+
+	# remove the robots line if you want to use wordpress' virtual robots.txt
+	location = /robots.txt  { access_log off; log_not_found off; }
+	location = /favicon.ico { access_log off; log_not_found off; }
+
+	# this prevents hidden files (beginning with a period) from being served
+	location ~ /\.          { access_log off; log_not_found off; deny all; }
+
+	# disable execution of PHP from uploads folder
+	location ~* /content/uploads/.*\.php$ {
+		return 403;
+	}
+
+	# TODO also catch any TimThumb directories here for strengthening TimThumb security
+	# -- or indeed any other directory that accepts uploads
+
+	location ~ \.php {
+		# prevent accidental PHP execution of non-PHP extensions
+		# see http://wiki.nginx.org/Pitfalls
+		try_files $uri =404;
+		location ~ \..*/.*\.php$ {
+			return 404;
+		}
+
+		fastcgi_param  QUERY_STRING       $query_string;
+		fastcgi_param  REQUEST_METHOD     $request_method;
+		fastcgi_param  CONTENT_TYPE       $content_type;
+		fastcgi_param  CONTENT_LENGTH     $content_length;
+
+		fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
+		fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+		fastcgi_param  REQUEST_URI        $request_uri;
+		fastcgi_param  DOCUMENT_URI       $document_uri;
+		fastcgi_param  DOCUMENT_ROOT      $document_root;
+		fastcgi_param  SERVER_PROTOCOL    $server_protocol;
+
+		fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+		fastcgi_param  SERVER_SOFTWARE    nginx;
+
+		fastcgi_param  REMOTE_ADDR        $remote_addr;
+		fastcgi_param  REMOTE_PORT        $remote_port;
+		fastcgi_param  SERVER_ADDR        $server_addr;
+		fastcgi_param  SERVER_PORT        80;
+		fastcgi_param  SERVER_NAME        $server_name;
+
+		fastcgi_pass unix:/var/run/php5-fpm-pools-<%= app_name %>.sock;
+	}
+}
