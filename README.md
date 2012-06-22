@@ -30,6 +30,8 @@ Thanks!
 [Chris Van Patten](https://github.com/chrisvanpatten) and [Peter Upfold](https://github.com/PeterUpfold)<br>
 (The [Van Patten Media](http://www.vanpattenmedia.com/) Team)
 
+- - -
+
 ### Getting started
 
 There are a few things you'll need to do to get started.
@@ -67,6 +69,8 @@ Enjoy!
     *   [Vagrant](http://vagrantup.com/)
     *   [Symfony YAML](http://symfony.com/doc/current/components/yaml.html)
     *   [WordPress](http://www.wordpress.org/)
+
+- - -
 
 ### License
 
