@@ -30,6 +30,33 @@ Thanks!
 [Chris Van Patten](https://github.com/chrisvanpatten) and [Peter Upfold](https://github.com/PeterUpfold)<br>
 (The [Van Patten Media](http://www.vanpattenmedia.com/) Team)
 
+### Getting started
+
+There are a few things you'll need to do to get started.
+
+#### Getting Vagrant in place
+
+1.  Install [Vagrant](http://downloads.vagrantup.com/).
+2.  Run `git clone git://github.com/vanpattenmedia/wpframe.git projectname && cd projectname && rm -rf .git` to prepare your project directory
+3.  Edit the [Vagrantfile](https://github.com/vanpattenmedia/wpframe/blob/master/Vagrantfile) to use your own [box](https://github.com/vanpattenmedia/wpframe/blob/master/Vagrantfile#L5). There are some available at [VagrantBox.es](http://www.vagrantbox.es/).
+3.  `git init && git commit -am 'Initial commit'` - get this puppy in version control again.
+4.  `mv config/project.example.yml config/project.yml` and edit the result to use your project's info (you may not have a repo yet; that's okay, you don't need it until you deploy to a remote)
+5.  `mv config/database.example.yml config/database.yml` and add in some new DB credentials. Keep in mind these are **new** credentials - Puppet will generate new databases and users based on what you set here. The databases _should not exist_.
+6.  Edit your hosts file to point `dev.yourdomain.com` to the IP set in the Vagrantfile
+7.  `vagrant up` - launch Vagrant!
+8.  Visit [http://dev.yourdomain.com/wp/] to complete WordPress setup. You may need to manually edit the database to use the /wp/ as admin convention.
+
+#### Staging and production
+
+1.  Make sure your remote server has SSH key access set up, and that your deploy user has sudo access
+2.  Make sure you have a Git repo in place by now.
+3.  Run `cap staging deploy:setup`
+4.  If everything runs without error, run `cap staging deploy` to execute a deploy
+5.  You can reprovision at any time with `cap staging puppet:show`
+6.  To setup/deploy/reprovision on production, follow the same steps, but replace "`staging`" with "`production`".
+
+Enjoy!
+
 ### Special thanks to
 
 *   [Mark Jaquith](http://markjaquith.com/)
