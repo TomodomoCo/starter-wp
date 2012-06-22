@@ -27,7 +27,8 @@ We hope this provides a good starting point for others looking to set up a simil
 
 Thanks!
 
-The [Van Patten Media](http://www.vanpattenmedia.com/) Team
+[Chris Van Patten](https://github.com/chrisvanpatten) and [Peter Upfold](https://github.com/PeterUpfold)
+(The [Van Patten Media](http://www.vanpattenmedia.com/) Team)
 
 ### License
 
