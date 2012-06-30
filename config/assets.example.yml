@@ -1,0 +1,8 @@
+compress_assets:       on
+gzip_assets:           off
+javascript_compressor: uglifier
+
+javascripts:
+  /public/content/themes/theme/js/script.min:
+    - vendor/javascripts/**/*.js
+    - app/assets/javascripts/*.js
