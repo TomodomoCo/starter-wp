@@ -8,6 +8,7 @@ It uses the following technologies:
 *   Capistrano
 *   Vagrant
 *   Compass
+*   Jammit
 *   And a whole lotta Git and YAML (via Symfony YAML)
 
 It assumes a lot about the set up of your development process and servers. For example...
@@ -16,7 +17,6 @@ It assumes a lot about the set up of your development process and servers. For e
     *   Puppet for provisioning (local and remotes)
     *   Nginx and PHP-FPM for serving sites
     *   Varnish for caching
-    *   A "remote" database server on a local network, connected via SSL and a custom wpdb class
 *   We have a "deploy" user that actually executes deployments
 *   Our development process is three stages (local/staging/production) with local dev happening in the Vagrant box
 *   Vagrant is set up for host-only networking
