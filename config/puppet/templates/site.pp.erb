@@ -1,4 +1,9 @@
-# Make variables available to the ERB files that Puppet will render
+##################################
+#                                #
+#            Variables           #
+#                                #
+##################################
+
 $app_stage     = "<%= app_stage %>"
 $app_domain    = "<%= app_domain %>"
 $app_deploy_to = "<%= app_deploy_to %>"
@@ -14,6 +19,13 @@ else
   erb_path = "/home/deploy/tmp/#{app_name}/#{app_stage}/templates"
 end
 %>
+
+
+##################################
+#                                #
+#   Ensure appropriate packages  #
+#                                #
+##################################
 
 package { "nginx":
 	ensure => latest,
@@ -37,18 +49,25 @@ file { "/etc/resolv.conf":
 }
 <% end %>
 
-file { "/etc/nginx/sites-available/<%= app_name %>-<%= app_stage %>":
+
+##################################
+#                                #
+#   Put nginx configs in place   #
+#                                #
+##################################
+
+file { "/etc/nginx/sites-available/<%= app_name %>/<%= app_stage %>":
 	owner => root,
 	group => root,
 	mode  => 644,
-	content => template("<%= erb_path %>/nginx.erb"),
+	content => template("<%= erb_path %>/nginx/default.erb"),
 	require => Package["nginx"],
 	notify => Service["nginx"]
 }
 
 file { "/etc/nginx/sites-enabled/<%= app_name %>-<%= app_stage %>":
 	ensure => symlink,
-	target => "/etc/nginx/sites-available/<%= app_name %>-<%= app_stage %>",
+	target => "/etc/nginx/sites-available/<%= app_name %>/<%= app_stage %>",
 	require => Package["nginx"],
 	notify => Service["nginx"]
 }
@@ -59,6 +78,13 @@ file { "/etc/nginx/sites-enabled/default":
 	#notify => Package["nginx"]
 }
 
+
+##################################
+#                                #
+#          Create groups         #
+#                                #
+##################################
+
 group { "<%= app_user %>-homerw":
 	ensure => present,
 }
@@ -67,29 +93,33 @@ group { "<%= app_group %>":
 	ensure => present,
 }
 
+
+##################################
+#                                #
+#          Create users          #
+#                                #
+##################################
+
 user { "www-data":
 	ensure => present,
 	groups => ["<%= app_user %>-homerw"],
 	membership => minimum,
 }
 
-user { "peter":
+<% app_access_users.each do |access_user| %>
+user { "<%= access_user %>":
 	ensure => present,
 	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
 	membership => minimum,
 }
+<% end %>
 
-user { "chris":
-	ensure => present,
-	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
-	membership => minimum,
-}
 
-user { "deploy":
-	ensure => present,
-	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
-	membership => minimum,
-}
+##################################
+#                                #
+#     Create home directories    #
+#                                #
+##################################
 
 <% if app_stage == "dev" %>
 user { "vagrant":
@@ -121,6 +151,13 @@ file { "/home/<%= app_user %>":
 	mode => 770,
 }
 <% end %>
+
+
+##################################
+#                                #
+#       Set up PHP logging       #
+#                                #
+##################################
 
 file { "/home/<%= app_user %>/php":
 	ensure => directory,
@@ -164,6 +201,13 @@ file { "/home/<%= app_user %>/php/log/error.log":
 	require => Package["php5-fpm"]
 }
 
+
+##################################
+#                                #
+#    Render the PHP-FPM config   #
+#                                #
+##################################
+
 # pool must be after the files it depends on above
 file { "/etc/php5/fpm/pool.d/<%= app_name %>.pool.conf":
 	owner => root,
@@ -191,6 +235,13 @@ file { "/etc/varnish/default.vcl":
 }
 <% end %>
 
+
+##################################
+#                                #
+# Custom command to set up MySQL #
+#                                #
+##################################
+
 define mysqldb( $user, $password, $host, $grant_to ) {
 	exec { "create-${name}-db":
 		unless => $app_stage ? {
@@ -212,6 +263,13 @@ mysqldb { "<%= db_name %>":
 	host => "<%= db_host %>",
 	grant_to => "<%= db_grant_to %>",
 }
+
+
+##################################
+#                                #
+#  Ensure everything is running  #
+#                                #
+##################################
 
 service { "nginx":
 	ensure => running,

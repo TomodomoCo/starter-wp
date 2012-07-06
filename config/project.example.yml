@@ -1,14 +1,22 @@
 application:
   # Project name
   name: vanpattenmedia
+
   # Path to a repo for Capistrano
   repo: git://github.com/username/repo.com.git
+
   # User on your server who will be executing the deployment
   deploy_user: deploy
+
+  # Users on your server who can access this project - be sure to include your deploy_user!
+  access_users: [deploy, user1, user2, user3]
+
   # User/group on your server who will own this project
   user: user
   group: group
+
   # The name of the theme
   theme: theme
+
   # Domain for this project, no www. or subdomains
   domain: domain.com

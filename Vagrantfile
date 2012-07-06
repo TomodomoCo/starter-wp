@@ -17,19 +17,20 @@ Vagrant::Config.run do |config|
   project  = YAML.load_file("./config/project.yml")
   database = YAML.load_file("./config/database.yml")
 
-  app_theme     = project['application']['theme']
-  app_name      = project['application']['name']
-  app_user      = "vagrant"
-  app_group     = "vagrant"
-  app_stage     = "dev"
-  app_domain    = "#{app_stage}." + project['application']['domain']
-  app_deploy_to = "/home/#{app_user}/#{app_domain}"
+  app_theme        = project['application']['theme']
+  app_name         = project['application']['name']
+  app_user         = "vagrant"
+  app_group        = "vagrant"
+  app_stage        = "dev"
+  app_domain       = "#{app_stage}." + project['application']['domain']
+  app_deploy_to    = "/home/#{app_user}/#{app_domain}"
+  app_access_users = project['application']['access_users']
 
-  db_name       = database['dev']['name']
-  db_user       = database['dev']['user']
-  db_password   = database['dev']['password']
-  db_host       = database['dev']['host']
-  db_grant_to   = database['dev']['grant_to']
+  db_name          = database['dev']['name']
+  db_user          = database['dev']['user']
+  db_password      = database['dev']['password']
+  db_host          = database['dev']['host']
+  db_grant_to      = database['dev']['grant_to']
 
   config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".")
 
