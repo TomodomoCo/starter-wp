@@ -9,6 +9,8 @@ It uses the following technologies:
 *   Vagrant
 *   Compass
 *   Jammit
+*   Guard
+*   LiveReload
 *   And a whole lotta Git and YAML (via Symfony YAML)
 
 It assumes a lot about the set up of your development process and servers. For example...
@@ -36,22 +38,45 @@ Thanks!
 
 There are a few things you'll need to do to get started.
 
-1.  Install [Vagrant](http://downloads.vagrantup.com/).
-2.  Run `git clone git://github.com/vanpattenmedia/wpframe.git projectname && cd projectname && rm -rf .git` to prepare your project directory
-3.  Run `gem install bundler` to install [Bundler](http://gembundler.com/), then `bundle install` to install the required Ruby dependencies
-4.  Edit the [Vagrantfile](https://github.com/vanpattenmedia/wpframe/blob/master/Vagrantfile) to use your own [box](https://github.com/vanpattenmedia/wpframe/blob/master/Vagrantfile#L5). There are some available at [VagrantBox.es](http://www.vagrantbox.es/).
-5.  `mv config/project.example.yml config/project.yml` and edit the result to use your project's info (you may not have a repo yet; that's okay, you don't need it until you deploy to a remote)
-6.  `git init && git commit -am 'Initial commit'` - get this puppy in version control again.
-7.  `mv config/database.example.yml config/database.yml` and add in some new DB credentials. Keep in mind these are **new** credentials - Puppet will generate new databases and users based on what you set here. The databases _should not exist_.
-    *   **Important:** Double check to make sure that your database.yml file isn't being included in version control before you make your next commit. You want these credentials to be private.
-8.  Edit your hosts file to point `dev.yourdomain.com` to the IP set in the Vagrantfile
-9.  `vagrant up` - launch Vagrant!
-10.  Visit [http://dev.yourdomain.com/wp/] to complete WordPress setup. You may need to manually edit the database to use the /wp/ as admin convention.
+#### Get wpframe
 
-#### Staging and production
+1.  Run `git clone --depth=1 git://github.com/vanpattenmedia/wpframe.git projectname && cd projectname && git remote rm origin` to prepare your project directory
+    *    **Note:** This will pull the latest commits and remove the default "origin" remote, setting you up to start a new project (essentially) from scratch. Remove `--depth=1` to grab all commits in the history, and remove `git remote rm origin` to keep the origin (not recommended).
+
+#### Install dependencies
+
+1.  Install [Vagrant](http://downloads.vagrantup.com/).
+2.  Run `gem install bundler` to install [Bundler](http://gembundler.com/), then `bundle install` to install the required Ruby dependencies
+
+#### Configure some configurations
+
+1.  Edit the [Vagrantfile](https://github.com/vanpattenmedia/wpframe/blob/master/Vagrantfile) to use your own [box](https://github.com/vanpattenmedia/wpframe/blob/master/Vagrantfile#L5).
+    *   There are some available at [VagrantBox.es](http://www.vagrantbox.es/).
+2.  `mv config/project.example.yml config/project.yml` and edit the result to use your project's info
+    *   You may not have a repo yet; that's okay, you don't need it until you deploy to a remote.
+3.  `mv config/assets.example.yml config/assets.yml` and edit it to use your `themename`.
+4.  `mv config/database.example.yml config/database.yml` and add in some new DB credentials. Keep in mind these are **new** credentials - Puppet will generate new databases and users based on what you set here. The databases _should not exist_.
+    *   **Important:** Double check to make sure that your database.yml file isn't being included in version control before you make your next commit. You need these credentials to be private.
+
+#### Save your progress
+
+1.  `git commit -am 'My initial commit'` - You might also want to add a new remote now.
+
+#### Get it running!
+
+1.  Edit your local computer's hosts file to point `dev.yourdomain.com` to the IP set in the Vagrantfile
+2.  `vagrant up` - launch Vagrant!
+3.  Visit [http://dev.yourdomain.com/wp/] to complete WordPress setup. You may need to manually edit the database to use the `/wp/` as the admin base.
+
+#### While you're working...
+
+1.  Run `bundle exec guard` to begin watching JavaScript and SCSS for compilation/compression, and other site files for LiveReload in your browser.
+    *   Make sure you have the [LiveReload browser extension](http://feedback.livereload.com/knowledgebase/articles/86242-how-do-i-install-and-use-the-browser-extensions-) installed and running for LiveReload support.
+
+#### Deploying and provisioning staging and production
 
 1.  Make sure your remote server has SSH key access set up, and that your deploy user has sudo access
-2.  Make sure you have a Git repo in place by now in config/project.yml
+2.  Make sure you have a Git repo in place by now in `config/project.yml`
 3.  Run `cap staging deploy:setup`
 4.  If everything runs without error, run `cap staging deploy` to execute a deploy
 5.  You can reprovision at any time with `cap staging puppet:show`
