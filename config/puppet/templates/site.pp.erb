@@ -60,7 +60,7 @@ file { "/etc/resolv.conf":
 #                                #
 ##################################
 
-file "/etc/nginx/sites-available/<%= app_name %>" {
+file { "/etc/nginx/sites-available/<%= app_name %>":
 	ensure => directory,
 	owner => root,
 	group => root,
