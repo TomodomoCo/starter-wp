@@ -6,11 +6,15 @@
 
 $app_stage     = "<%= app_stage %>"
 $app_domain    = "<%= app_domain %>"
+$site_domain   = "<%= site_domain %>"
 $app_deploy_to = "<%= app_deploy_to %>"
 $app_theme     = "<%= app_theme %>"
 $app_name      = "<%= app_name %>"
 $app_user      = "<%= app_user %>"
 $app_group     = "<%= app_group %>"
+
+# random minute for cron
+$random_minute = "<%= rand(60) %>"
 
 <%
 if app_stage == "dev"
@@ -28,16 +32,16 @@ end
 ##################################
 
 package { "nginx":
-	ensure => latest,
+	ensure => installed,
 #	hasrestart => true
 }
 
 package { "php5-fpm":
-	ensure => latest
+	ensure => installed
 }
 
 package { "varnish":
-	ensure => latest
+	ensure => installed
 }
 
 <% if app_stage == "dev" %>
@@ -71,6 +75,24 @@ file { "/etc/nginx/sites-enabled/<%= app_name %>-<%= app_stage %>":
 	require => Package["nginx"],
 	notify => Service["nginx"]
 }
+
+<% if app_stage == "staging" %>
+file { "/etc/nginx/sites-available/<%= app_name %>/uploads":
+	owner => root,
+	group => root,
+	mode  => 644,
+	content => template("<%= erb_path %>/nginx/uploads.erb"),
+	require => Package["nginx"],
+	notify => Service["nginx"]
+}
+
+file { "/etc/nginx/sites-enabled/<%= app_name %>-uploads":
+	ensure => symlink,
+	target => "/etc/nginx/sites-available/<%= app_name %>/uploads",
+	require => Package["nginx"],
+	notify => Service["nginx"]
+}
+<% end %>
 
 file { "/etc/nginx/sites-enabled/default":
 	ensure => absent,
@@ -152,6 +174,12 @@ file { "/home/<%= app_user %>":
 }
 <% end %>
 
+file { "/home/<%= app_user %>/uploads.<%= site_domain %>":
+	ensure => directory,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	mode => 775,
+}
 
 ##################################
 #                                #
@@ -246,11 +274,11 @@ define mysqldb( $user, $password, $host, $grant_to ) {
 	exec { "create-${name}-db":
 		unless => $app_stage ? {
 			'dev'   => "/usr/bin/mysql -u${user} -pvagrant ${name}",
-			default => "/usr/bin/mysql --ssl -h ${db_host} ${name}",
+			default => "/usr/bin/mysql -h ${db_host} ${name}",
 		},
 		command => $app_stage ? {
 			'dev'   => "/usr/bin/mysql -uroot -pvagrant -e \"CREATE DATABASE ${name}; GRANT ALL ON ${name}.* TO ${user}@localhost IDENTIFIED BY '$password';\"",
-			default => "/usr/bin/mysql --ssl -h ${host} -e \"CREATE DATABASE ${name}; GRANT ALL ON ${name}.* TO ${user}@${grant_to} IDENTIFIED BY '$password' REQUIRE SSL;\"",
+			default => "/usr/bin/mysql -h ${host} -e \"CREATE DATABASE ${name}; GRANT ALL ON ${name}.* TO ${user}@${grant_to} IDENTIFIED BY '$password';\"",
 			require => Service["mysqld"],
 		},
 	}
@@ -262,6 +290,65 @@ mysqldb { "<%= db_name %>":
 	password => "<%= db_password %>",
 	host => "<%= db_host %>",
 	grant_to => "<%= db_grant_to %>",
+}
+
+##################################
+#                                #
+#          Cron Job              #
+#                                #
+##################################
+
+# Thanks to <http://linuxman.wikispaces.com/Creating+a+cron+job+with+puppet>
+# Call with enable => "false" to delete the job.
+
+define cron_job( $enable = "true", $interval = "daily", $script = "", $package = "" ) {
+        file { "/etc/cron.$interval/$name":
+                content         => $script,
+                ensure          => $enable ? {
+                        "false" => absent,
+                        default => file,
+                },
+                force           => true,
+                owner           => root,
+                group           => root,
+                mode            => $interval ? {
+                        "d"     => 644,
+                        default => 755,
+                },
+                require         => $package ? {
+                        ""      => undef,
+                        default => Package[$package],
+                },
+        }
+}
+
+# TODO -- split this out
+file { "/home/<%= app_user %>/bin":
+	ensure => directory,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	mode => 775,
+}
+
+file { "/home/<%= app_user %>/bin/uploads_to_s3.py":
+	ensure => file,
+	owner => <%= app_user %>,
+	group => <%= app_group %>,
+	mode => 775, # keep it executable!
+	source => "<%= app_deploy_to %>/current/config/puppet/files/uploads_to_s3.py",
+}
+
+cron_job { "<%= app_name %>_uploads_to_s3":
+
+	interval	=> "d", # use cron.d folder for user-specific execution
+	script 		=> "# created by Puppet
+MAILTO=\"someone@example.com\"
+
+# m  		 h  dom   mon   dow    user		command
+ $random_minute  4  *     *     6      <%= app_user %>	/usr/bin/nice -n 17 /home/<%= app_user %>/bin/uploads_to_s3.py /home/<%= app_user %>/<%= app_domain %>/shared/config/s3.yml /home/<%= app_user %>/uploads.<%= site_domain %>/
+", 
+
+
 }
 
 

@@ -7,7 +7,7 @@ Vagrant::Config.run do |config|
   if File.exist?("./config/vagrant-custom.rb")
     require "./config/vagrant-custom.rb"
   else
-    config.vm.network :hostonly, "192.168.33.50"
+    config.vm.forward_port 80, 8080
   end
 
   # bring in the YAML!!!111!1oneONE
@@ -17,20 +17,20 @@ Vagrant::Config.run do |config|
   project  = YAML.load_file("./config/project.yml")
   database = YAML.load_file("./config/database.yml")
 
-  app_theme        = project['application']['theme']
-  app_name         = project['application']['name']
-  app_user         = "vagrant"
-  app_group        = "vagrant"
-  app_stage        = "dev"
-  app_domain       = "#{app_stage}." + project['application']['domain']
-  app_deploy_to    = "/home/#{app_user}/#{app_domain}"
-  app_access_users = project['application']['access_users']
+  app_theme     = project['application']['theme']
+  app_name      = project['application']['name']
+  app_user      = "vagrant"
+  app_group     = "vagrant"
+  app_stage     = "dev"
+  site_domain   = project['application']['domain']
+  app_domain    = "#{app_stage}." + project['application']['domain']
+  app_deploy_to = "/home/#{app_user}/#{app_domain}"
 
-  db_name          = database['dev']['name']
-  db_user          = database['dev']['user']
-  db_password      = database['dev']['password']
-  db_host          = database['dev']['host']
-  db_grant_to      = database['dev']['grant_to']
+  db_name       = database['dev']['name']
+  db_user       = database['dev']['user']
+  db_password   = database['dev']['password']
+  db_host       = database['dev']['host']
+  db_grant_to   = database['dev']['grant_to']
 
   config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".")
 

@@ -1,4 +1,5 @@
 application:
+
   # Project name
   name: vanpattenmedia
 
@@ -20,3 +21,28 @@ application:
 
   # Domain for this project, no www. or subdomains
   domain: domain.com
+
+  tbl_prefix: wp_
+  # The database prefix for WordPress
+
+  servers:
+  # The server addresses and SSH details for each stage.
+
+    dev:
+      # Vagrant default settings
+      ip: 127.0.0.1
+      port: 2222
+      user: vagrant
+
+    staging:
+    # Replace these with your server's IP, deploy user and SSH port
+      ip: 0.0.0.0
+      port: 0
+      user: deploy
+
+    production:
+      ip: 0.0.0.0
+      port: 0
+      user: deploy
+
+ 

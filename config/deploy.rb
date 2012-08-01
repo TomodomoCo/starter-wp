@@ -1,24 +1,20 @@
 # Require multistage for local->staging->production deployment...
 require "capistrano/ext/multistage"
+project = YAML.load_file("./config/project.yml")
 
 # Defaults...
-set :scm, :git
+set :scm,                   :git
 set :git_enable_submodules, 1
-set :stages, ["staging", "production"]
-set :default_stage, "staging"
+set :stages,                ["staging", "production"]
+set :default_stage,         "staging"
+# set :deploy_via, :remote_cache
 
 # This site...
-project  = YAML.load_file("./config/project.yml")
-
-set :app_name,    project['application']['name']
-set :application, fetch(:app_name)
-
-set :app_theme,   project['application']['theme']
-set :repository,  project['application']['repo']
-
-set :user, project['application']['deploy_user']
-set :app_user, project['application']['user']
-set :app_group, project['application']['group']
+set :application, project["application"]["name"]
+set :repository,  project["application"]["repo"]
+set :user,        "deploy" #TODO load me from YAML? The app_stage isn't loaded yet.
+set :app_user,    project["application"]["user"]
+set :app_group,   project["application"]["group"]
 
 # Don't do Railsy things...
 namespace :deploy do
@@ -33,15 +29,16 @@ namespace :deploy do
   end
 
   task :restart do
-    run "#{sudo} service nginx reload"
+    run "#{sudo} nginx -s reload"
   end
 end
 
 # Set up some VPM-specific tasks
 before "deploy:setup", "puppet:show"
 after "deploy:setup", "vpm:fix_setup_ownership"
-before "deploy:create_symlink", "vpm:upload_db_cred", "vpm:symlink_db_cred"
+before "deploy:create_symlink", "vpm:upload_db_cred", "vpm:symlink_db_cred", "vpm:upload_assets"
 before "deploy:restart", "vpm:fix_deploy_ownership"
+after "deploy", "deploy:cleanup"
 
 namespace :puppet do
   desc "Set up puppet"
@@ -70,10 +67,40 @@ namespace :vpm do
     run "#{sudo} chmod -R g+s #{deploy_to}/current/public"
   end
 
-  desc "Upload database credentials to the shared directory"
+  desc "Upload database and S3 credentials to the shared directory"
   task :upload_db_cred, :roles => :app do
-    run "mkdir #{shared_path}/config"
+    run "mkdir -p #{shared_path}/config"
     upload("./config/database.yml", "#{shared_path}/config/database.yml")
+    upload("./config/s3.yml", "#{shared_path}/config/s3.yml")
+  end
+
+  desc "Upload compiled JS, CSS, and Compass-rendered images"
+  task :upload_assets, :roles => :app do
+    run "mkdir -p #{release_path}/public/content/themes/#{project['application']['theme']}/css/ #{release_path}/public/content/themes/#{project["application"]["theme"]}/js/ #{release_path}/public/content/themes/#{project["application"]["theme"]}/img/rgbapng/"
+
+    system("compass compile -e production --force")
+    system("jammit -c config/assets.yml")
+
+    upload(
+      "./public/content/themes/#{project["application"]["theme"]}/css/",
+      "#{release_path}/public/content/themes/#{project["application"]["theme"]}/",
+      :via => :scp,
+      :recursive => :true
+    )
+
+    upload(
+      "./public/content/themes/#{project["application"]["theme"]}/js/",
+      "#{release_path}/public/content/themes/#{project["application"]["theme"]}/",
+      :via => :scp,
+      :recursive => :true
+    )
+
+    upload(
+      "./public/content/themes/#{project["application"]["theme"]}/img/rgbapng/",
+      "#{release_path}/public/content/themes/#{project["application"]["theme"]}/img/",
+      :via => :scp,
+      :recursive => :true
+    )
   end
 
   desc "Symlink database credentials to the current release directory"
