@@ -60,6 +60,13 @@ file { "/etc/resolv.conf":
 #                                #
 ##################################
 
+file "/etc/nginx/sites-available/<%= app_name %>" {
+	ensure => directory,
+	owner => root,
+	group => root,
+	mode => 755
+}
+
 file { "/etc/nginx/sites-available/<%= app_name %>/<%= app_stage %>":
 	owner => root,
 	group => root,
