@@ -25,6 +25,7 @@ Vagrant::Config.run do |config|
   site_domain   = project['application']['domain']
   app_domain    = "#{app_stage}." + project['application']['domain']
   app_deploy_to = "/home/#{app_user}/#{app_domain}"
+  app_access_users = project['application']['access_users']
 
   db_name       = database['dev']['name']
   db_user       = database['dev']['user']
