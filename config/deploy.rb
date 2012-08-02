@@ -2,6 +2,9 @@
 require "capistrano/ext/multistage"
 project = YAML.load_file("./config/project.yml")
 
+# Require erb-render for including ERB fragments
+require "./erb-render.rb"
+
 # Defaults...
 set :scm,                   :git
 set :git_enable_submodules, 1

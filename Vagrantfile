@@ -10,6 +10,9 @@ Vagrant::Config.run do |config|
     config.vm.forward_port 80, 8080
   end
 
+  # allow us to include ERB fragments with the <%= render %> statement
+  require "./config/erb-render.rb"
+
   # bring in the YAML!!!111!1oneONE
   require "yaml"
   require "erb"
