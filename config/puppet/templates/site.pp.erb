@@ -44,6 +44,14 @@ require "./config/erb-render.rb"
 <%= render "#{modules_path}/defines/cron-job.erb" , binding %>
 <%= render "#{modules_path}/defines/mysql.erb", binding %>
 
+
+##################################
+#                                #
+#     Vagrant DNS override       #
+#                                #
+##################################
+
+
 <% if app_stage == "dev" %>
 file { "/etc/resolv.conf":
 	owner => root,
@@ -56,117 +64,51 @@ file { "/etc/resolv.conf":
 
 ##################################
 #                                #
-#          Create groups         #
+#      Users, groups and dirs    #
 #                                #
 ##################################
-
-group { "<%= app_user %>-homerw":
-	ensure => present,
-}
-
-group { "<%= app_group %>":
-	ensure => present,
-}
-
+<%= render "#{modules_path}/users.erb", binding %>
+<%= render "#{modules_path}/home-directories.erb", binding %>
 
 ##################################
 #                                #
-#          Create users          #
+#       Nginx configuration      #
 #                                #
 ##################################
-
-user { "www-data":
-	ensure => present,
-	groups => ["<%= app_user %>-homerw"],
-	membership => minimum,
-}
-
-<% app_access_users.each do |access_user| %>
-user { "<%= access_user %>":
-	ensure => present,
-	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
-	membership => minimum,
-}
-<% end %>
-
-
-##################################
-#                                #
-#     Create home directories    #
-#                                #
-##################################
-
-<% if app_stage == "dev" %>
-user { "vagrant":
-	ensure => present,
-	gid => "<%= app_user %>",
-	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
-	membership => minimum,
-}
-
-file { "/home/<%= app_user %>":
-	ensure => directory,
-	owner => vagrant,
-	group => vagrant-homerw,
-	mode => 755,
-}
-<% else %>
-user { "<%= app_user %>":
-	ensure => present,
-	gid => "<%= app_group %>",
-	groups => ["www-php-loggers","<%= app_user %>-homerw"],
-	membership => minimum,
-	password => "*", # disable password-based logins entirely
-}
-
-file { "/home/<%= app_user %>":
-	ensure => directory,
-	owner => <%= app_user %>,
-	group => <%= app_user %>-homerw,
-	mode => 770,
-}
-<% end %>
-
-file { "/home/<%= app_user %>/php/log/<%= app_name %>.slow.log":
-	ensure => file,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
-	require => Package["php5-fpm"]
-}
-
-file { "/home/<%= app_user %>/php/log/error.log":
-	ensure => file,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
-	require => Package["php5-fpm"]
-}
-
-
-
-# TODO -- split this out
-file { "/home/<%= app_user %>/bin":
-	ensure => directory,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
-	mode => 775,
-}
-
-file { "/home/<%= app_user %>/bin/uploads_to_s3.py":
-	ensure => file,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
-	mode => 775, # keep it executable!
-	source => "<%= app_deploy_to %>/current/config/puppet/files/uploads_to_s3.py",
-}
 
 <%= render "#{modules_path}/nginx/base.erb", binding %>
 <%= render "#{modules_path}/nginx/uploads.erb", binding %>
 
+##################################
+#                                #
+#        PHP configuration       #
+#                                #
+##################################
+
 <%= render "#{modules_path}/php5-fpm.erb", binding %>
 <%= render "#{modules_path}/php-logging.erb", binding %>
 
+##################################
+#                                #
+#            Varnish             #
+#                                #
+##################################
+
 <%= render "#{modules_path}/varnish.erb", binding %>
 
+##################################
+#                                #
+#    Create DB if not exists     #
+#                                #
+##################################
+
 <%= render "#{modules_path}/mysql-db-setup.erb", binding %>
+
+##################################
+#                                #
+#   'Cloud uploads' S3 script    #
+#                                #
+##################################
+
 
 <%= render "#{modules_path}/s3-storage-cron.erb", binding %>
