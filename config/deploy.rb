@@ -3,7 +3,7 @@ require "capistrano/ext/multistage"
 project = YAML.load_file("./config/project.yml")
 
 # Require erb-render for including ERB fragments
-require "./erb-render.rb"
+require "./config/erb-render.rb"
 
 # Defaults...
 set :scm,                   :git
@@ -18,6 +18,7 @@ set :repository,  project["application"]["repo"]
 set :user,        "deploy" #TODO load me from YAML? The app_stage isn't loaded yet.
 set :app_user,    project["application"]["user"]
 set :app_group,   project["application"]["group"]
+set :app_access_users, project["application"]["access_users"]
 
 # Don't do Railsy things...
 namespace :deploy do
