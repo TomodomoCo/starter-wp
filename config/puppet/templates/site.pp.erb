@@ -18,9 +18,9 @@ $random_minute = "<%= rand(60) %>"
 
 <%
 if app_stage == "dev"
-  erb_path = "#{app_deploy_to}/current/config/puppet/templates"
+  erb_path = "#{app_deploy_to}/current/config"
 else
-  erb_path = "/home/deploy/tmp/#{app_name}/#{app_stage}/templates"
+  erb_path = "/home/deploy/tmp/#{app_name}/#{app_stage}"
 end
 
 if File.basename(File.dirname(__FILE__)) == "config"
@@ -57,7 +57,7 @@ file { "/etc/resolv.conf":
 	owner => root,
 	group => root,
 	mode => 644,
-	source => "<%= app_deploy_to %>/current/config/puppet/files/vagrant_resolv.conf"
+	source => "<%= app_deploy_to %>/current/config/scripts/vagrant_resolv.conf"
 }
 <% end %>
 

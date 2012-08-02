@@ -10,3 +10,15 @@
 [submodule "config/puppet/modules"]
 	path = config/puppet/modules
 	url = git@github.com:vanpattenmedia/vpmframe-module-puppet
+[submodule "config/nginx"]
+	path = config/nginx
+	url = git@github.com:vanpattenmedia/vpmframe-module-nginx
+[submodule "config/php"]
+	path = config/php
+	url = git@github.com:vanpattenmedia/vpmframe-module-php
+[submodule "config/scripts"]
+	path = config/scripts
+	url = git@github.com:vanpattenmedia/vpmframe-module-scripts
+[submodule "config/varnish"]
+	path = config/varnish
+	url = git@github.com:vanpattenmedia/vpmframe-module-varnish
