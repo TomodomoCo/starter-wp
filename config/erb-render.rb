@@ -11,8 +11,9 @@
 
 require "erb"
 
-def render path
+def render (path, binding)
   content = File.read(File.expand_path(path))
-  t = ERB.new(content)
-  t.result(binding)
+  t = ERB.new(content, safe_level=nil, trim_mode=nil, eoutvar='sub_erb_out')
+  result = t.result(binding)
+  return result
 end
