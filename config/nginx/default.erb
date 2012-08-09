@@ -1,7 +1,109 @@
 #
 # Nginx ERB that loads from modules/
 #
+# Your WPFrame derived projects will have custom configuration here,
+# but can also load predefined functionality from nginx/modules with render()
 #
+
 <% require "#{app_deploy_to}/current/config/erb-render.rb" %>
 
 <%= render "#{app_deploy_to}/current/config/nginx/modules/redirect-to-www-production.erb", binding %>
+
+server {
+
+	##################################
+	#                                #
+	#        Default settings        #
+	#                                #
+	##################################
+
+	# Error Logging
+	error_log /var/log/nginx/error.log notice;
+	# rewrite_log on;
+
+	# Set the port
+	listen 8080;
+
+	# Where are we located? What should we load by default?
+	root <%= app_deploy_to %>/current/public;
+	index index.php index.html index.htm;
+
+	# What's our domain name?
+	<% if app_stage == "production" %>
+	server_name www.<%= app_domain %>;
+	<% else %>
+	server_name <%= app_domain %>;
+	<% end %>
+
+	# Avoid sendfile issues with sending stale files
+	# More: <http://www.vanpattenmedia.com/2012/a-tale-of-stale-content/>
+	sendfile off;
+
+
+
+	##################################
+	#                                #
+	#   Rewrites and asset caching   #
+	#                                #
+	##################################
+
+	location / {
+		try_files $uri $uri/ @rewrites;
+	}
+
+	location @rewrites {
+		<%= render "#{app_deploy_to}/current/config/nginx/modules/rewrites/default.erb", binding %>
+		
+		# wp-content -> content?
+
+		# If nothing matches, send it to index.php
+		rewrite ^ /index.php last;
+	}
+
+
+	###################
+	#      Fonts      #
+	###################
+
+	<%= render "#{app_deploy_to}/current/config/nginx/modules/fonts.erb", binding %>
+
+	###################
+	#      Images     #
+	###################
+	
+	<%= render "#{app_deploy_to}/current/config/nginx/modules/images.erb", binding %>
+
+	###################
+	#     CSS & JS    #
+	###################
+
+	<%= render "#{app_deploy_to}/current/config/nginx/modules/css-quickassets.erb", binding %>
+
+	###################
+	#  Error handling #
+	###################
+
+	# redirect server error pages to the static page /50x.html
+	# error_page 404 /404.html;
+	# error_page 500 502 503 504 /50x.html;
+	# location = /50x.html {
+	# 	root /usr/share/nginx/www;
+	# }	
+
+	###################
+	# Misc. security  #
+	###################
+
+	<%= render "#{app_deploy_to}/current/config/nginx/modules/default-deny.erb", binding %>
+
+	<%= render "#{app_deploy_to}/current/config/nginx/modules/timthumb-lockdown.erb", binding %>
+
+	##################################
+	#                                #
+	#      PHP-related settings      #
+	#                                #
+	##################################
+
+	<%= render "#{app_deploy_to}/current/config/nginx/modules/php-fpm.erb", binding %>
+
+}
