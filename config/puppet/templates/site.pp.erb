@@ -43,7 +43,7 @@ require "./config/erb-render.rb"
 
 <%= render "#{modules_path}/defines/cron-job.erb" , binding %>
 <%= render "#{modules_path}/defines/mysql.erb", binding %>
-
+<%= render "#{modules_path}/defines/vcl-rule.erb", binding %>
 
 ##################################
 #                                #
