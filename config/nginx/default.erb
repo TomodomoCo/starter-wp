@@ -1,13 +1,8 @@
-#
-# Nginx ERB that loads from modules/
-#
-# Your WPFrame derived projects will have custom configuration here,
-# but can also load predefined functionality from nginx/modules with render()
-#
+# Rendered: <%= Time.now.utc %>
+<% require "#{config_path}/erb-render.rb" %>
 
-<% require "#{app_deploy_to}/current/config/erb-render.rb" %>
-
-<%= render "#{app_deploy_to}/current/config/nginx/modules/redirect-to-www-production.erb", binding %>
+# Redirect to WWW on production
+<%= render "#{config_path}/nginx/modules/redirect-to-www-production.erb", binding %>
 
 server {
 
@@ -39,6 +34,8 @@ server {
 	# More: <http://www.vanpattenmedia.com/2012/a-tale-of-stale-content/>
 	sendfile off;
 
+	# Lockdown TimThumb
+	<%= render "#{config_path}/nginx/modules/timthumb-lockdown.erb", binding %>
 
 
 	##################################
@@ -52,7 +49,7 @@ server {
 	}
 
 	location @rewrites {
-		<%= render "#{app_deploy_to}/current/config/nginx/modules/rewrites/default.erb", binding %>
+		<%= render "#{config_path}/nginx/modules/rewrites/default.erb", binding %>
 		
 		# wp-content -> content?
 
@@ -65,19 +62,19 @@ server {
 	#      Fonts      #
 	###################
 
-	<%= render "#{app_deploy_to}/current/config/nginx/modules/fonts.erb", binding %>
+	<%= render "#{config_path}/nginx/modules/fonts.erb", binding %>
 
 	###################
 	#      Images     #
 	###################
 	
-	<%= render "#{app_deploy_to}/current/config/nginx/modules/images.erb", binding %>
+	<%= render "#{config_path}/nginx/modules/images.erb", binding %>
 
 	###################
 	#     CSS & JS    #
 	###################
 
-	<%= render "#{app_deploy_to}/current/config/nginx/modules/css-quickassets.erb", binding %>
+	<%= render "#{config_path}/nginx/modules/css-quickassets.erb", binding %>
 
 	###################
 	#  Error handling #
@@ -90,13 +87,7 @@ server {
 	# 	root /usr/share/nginx/www;
 	# }	
 
-	###################
-	# Misc. security  #
-	###################
-
-	<%= render "#{app_deploy_to}/current/config/nginx/modules/default-deny.erb", binding %>
-
-	<%= render "#{app_deploy_to}/current/config/nginx/modules/timthumb-lockdown.erb", binding %>
+	<%= render "#{config_path}/nginx/modules/default-deny.erb", binding %>
 
 	##################################
 	#                                #
@@ -104,6 +95,6 @@ server {
 	#                                #
 	##################################
 
-	<%= render "#{app_deploy_to}/current/config/nginx/modules/php-fpm.erb", binding %>
+	<%= render "#{config_path}/nginx/modules/php-fpm.erb", binding %>
 
 }

@@ -5,13 +5,13 @@
 # but can also load predefined functionality from varnish/modules with render()
 #
 
-<% require "#{app_deploy_to}/current/config/erb-render.rb" %>
+<% require "#{config_path}/erb-render.rb" %>
 
 # Do not fail to include the if line below, or your rules will become Varnish-global
 if (req.http.host ~ "<%= site_domain %>$") {
             
         # Cookie handling -- this default removes all server-side Set-Cookies not sent by wp-login and wp-admin
-        <%= render "#{app_deploy_to}/current/config/varnish/modules/recv/wordpress-cookies.erb", binding %>  
+        <%= render "#{config_path}/varnish/modules/recv/wordpress-cookies.erb", binding %>  
 
 }
 

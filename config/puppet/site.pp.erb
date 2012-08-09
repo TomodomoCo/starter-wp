@@ -17,23 +17,15 @@ $app_group     = "<%= app_group %>"
 $random_minute = "<%= rand(60) %>"
 
 <%
-if app_stage == "dev"
-  erb_path = "#{app_deploy_to}/current/config"
-else
-  erb_path = "/home/deploy/tmp/#{app_name}/#{app_stage}"
-end
-
-if File.basename(File.dirname(__FILE__)) == "config"
-  modules_path = "./puppet/modules"
-else
-  modules_path = "./config/puppet/modules"
-end
+config_path       = "/home/deploy/tmp/#{app_name}/#{app_stage}"
+modules_path   = "#{config_path}/puppet/modules"
 
 # allow us to include ERB fragments with the render statement
 require "./config/erb-render.rb"
 
 %>
-
+$config_path = "<%= config_path %>"
+$modules_path = "<%= modules_path %>"
 
 ##################################
 #                                #
@@ -57,7 +49,7 @@ file { "/etc/resolv.conf":
 	owner => root,
 	group => root,
 	mode => 644,
-	source => "<%= app_deploy_to %>/current/config/scripts/modules/vagrant_resolv.conf"
+	source => "<%= config_path %>/current/config/scripts/modules/vagrant_resolv.conf"
 }
 <% end %>
 
@@ -67,8 +59,10 @@ file { "/etc/resolv.conf":
 #      Users, groups and dirs    #
 #                                #
 ##################################
+
 <%= render "#{modules_path}/users.erb", binding %>
 <%= render "#{modules_path}/home-directories.erb", binding %>
+
 
 ##################################
 #                                #
@@ -79,6 +73,7 @@ file { "/etc/resolv.conf":
 <%= render "#{modules_path}/nginx/base.erb", binding %>
 <%= render "#{modules_path}/nginx/uploads.erb", binding %>
 
+
 ##################################
 #                                #
 #        PHP configuration       #
@@ -88,6 +83,7 @@ file { "/etc/resolv.conf":
 <%= render "#{modules_path}/php5-fpm.erb", binding %>
 <%= render "#{modules_path}/php-logging.erb", binding %>
 
+
 ##################################
 #                                #
 #            Varnish             #
@@ -95,6 +91,7 @@ file { "/etc/resolv.conf":
 ##################################
 
 <%= render "#{modules_path}/varnish.erb", binding %>
+
 
 ##################################
 #                                #
@@ -104,11 +101,11 @@ file { "/etc/resolv.conf":
 
 <%= render "#{modules_path}/mysql-db-setup.erb", binding %>
 
+
 ##################################
 #                                #
 #   'Cloud uploads' S3 script    #
 #                                #
 ##################################
-
 
 <%= render "#{modules_path}/scripts/s3-storage-cron.erb", binding %>

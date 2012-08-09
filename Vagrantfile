@@ -22,8 +22,8 @@ Vagrant::Config.run do |config|
 
   app_theme     = project['application']['theme']
   app_name      = project['application']['name']
-  app_user      = "vagrant"
-  app_group     = "vagrant"
+  app_user      = project['application']['user']
+  app_group     = project['application']['group']
   app_stage     = "dev"
   site_domain   = project['application']['domain']
   app_domain    = "#{app_stage}." + project['application']['domain']
@@ -36,11 +36,11 @@ Vagrant::Config.run do |config|
   db_host       = database['dev']['host']
   db_grant_to   = database['dev']['grant_to']
 
-  config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".")
+  config.vm.share_folder("config", "/home/deploy/tmp/#{app_name}/#{app_stage}", "./config")
 
   config.vm.provision :puppet do |puppet|
     # Grab the manifest erb
-    pp_erb = ERB.new( File.read('config/puppet/templates/site.pp.erb') )
+    pp_erb = ERB.new( File.read('config/puppet/site.pp.erb') )
 
     # Write it out to a file
     File.open('config/puppet/rendered/site.pp', 'w') do |f|
