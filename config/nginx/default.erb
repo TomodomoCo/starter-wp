@@ -1,0 +1,7 @@
+#
+# Nginx ERB that loads from modules/
+#
+#
+<% require "#{app_deploy_to}/current/config/erb-render.rb" %>
+
+<%= render "#{app_deploy_to}/current/config/nginx/modules/redirect-to-www-production.erb", binding %>
