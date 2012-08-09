@@ -18,14 +18,13 @@ $random_minute = "<%= rand(60) %>"
 
 <%
 config_path       = "/home/deploy/tmp/#{app_name}/#{app_stage}"
-modules_path   = "#{config_path}/puppet/modules"
+modules_path   = "./config/puppet/modules"
 
 # allow us to include ERB fragments with the render statement
 require "./config/erb-render.rb"
 
 %>
 $config_path = "<%= config_path %>"
-$modules_path = "<%= modules_path %>"
 
 ##################################
 #                                #
@@ -49,7 +48,7 @@ file { "/etc/resolv.conf":
 	owner => root,
 	group => root,
 	mode => 644,
-	source => "<%= config_path %>/current/config/scripts/modules/vagrant_resolv.conf"
+	source => "<%= config_path %>/scripts/modules/vagrant_resolv.conf"
 }
 <% end %>
 
