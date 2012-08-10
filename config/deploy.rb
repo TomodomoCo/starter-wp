@@ -48,6 +48,7 @@ namespace :puppet do
   desc "Set up puppet"
   task :show, :roles => :app do
     run "mkdir -p /home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}"
+    upload("./config/erb-render.rb", "/home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}/erb-render.rb", :via => :scp)
     upload("./config/puppet", "/home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}", :via => :scp, :recursive => :true)
     upload("./config/nginx", "/home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}/nginx", :via => :scp, :recursive => :true)
     upload("./config/php", "/home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}/php", :via => :scp, :recursive => :true)
