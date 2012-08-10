@@ -1,3 +1,5 @@
+# Rendered: <%= Time.now.utc %>
+
 ##################################
 #                                #
 #            Variables           #
@@ -17,7 +19,7 @@ $app_group     = "<%= app_group %>"
 $random_minute = "<%= rand(60) %>"
 
 <%
-config_path       = "/home/deploy/tmp/#{app_name}/#{app_stage}"
+config_path    = "/home/deploy/tmp/#{app_name}/#{app_stage}"
 modules_path   = "./config/puppet/modules"
 
 # allow us to include ERB fragments with the render statement
@@ -36,12 +38,12 @@ $config_path = "<%= config_path %>"
 <%= render "#{modules_path}/defines/mysql.erb", binding %>
 <%= render "#{modules_path}/defines/vcl-rule.erb", binding %>
 
+
 ##################################
 #                                #
 #     Vagrant DNS override       #
 #                                #
 ##################################
-
 
 <% if app_stage == "dev" %>
 file { "/etc/resolv.conf":

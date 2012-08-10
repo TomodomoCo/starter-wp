@@ -64,17 +64,20 @@ server {
 
 	<%= render "#{config_path}/nginx/modules/fonts.erb", binding %>
 
+
 	###################
 	#      Images     #
 	###################
 	
 	<%= render "#{config_path}/nginx/modules/images.erb", binding %>
 
+
 	###################
 	#     CSS & JS    #
 	###################
 
 	<%= render "#{config_path}/nginx/modules/css-quickassets.erb", binding %>
+
 
 	###################
 	#  Error handling #
@@ -88,6 +91,7 @@ server {
 	# }	
 
 	<%= render "#{config_path}/nginx/modules/default-deny.erb", binding %>
+
 
 	##################################
 	#                                #

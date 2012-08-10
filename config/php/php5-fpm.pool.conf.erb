@@ -1,5 +1,6 @@
 [<%= app_name %>]
 
+;;; Rendered: <%= Time.now.utc %>
 <% require "#{config_path}/erb-render.rb" %>
 
 ;;; Basic credentials
@@ -17,15 +18,12 @@
 ;
 ; In our configuration, PHP listeners are by far the largest per-site
 ; memory drain, so it pays to tweak, test, and get this right.
-
 <%= render "#{config_path}/php/modules/pm-lowtraffic.erb", binding %>
 
 ;;; Logging
-
 <%= render "#{config_path}/php/modules/logging.erb", binding %>
 
 ;;; Security
-
 <%= render "#{config_path}/php/modules/security.erb", binding %>
 
 ;;; Default PHP.ini overrides
