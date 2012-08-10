@@ -24,6 +24,6 @@ set :app_theme,   project['application']['theme']
 set :site_domain, project['application']['domain']
 set :app_domain,  project['application']['domain']
 
-# Deploy path
+# Deploy path (:deploy_to for Capistrano, :app_deploy_to for var consistency w/in wpframe)
 set :deploy_to,     "/home/#{fetch(:app_user)}/#{fetch(:app_domain)}"
 set :app_deploy_to, fetch(:deploy_to)
