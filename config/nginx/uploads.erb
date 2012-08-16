@@ -1,0 +1,22 @@
+# Rendered: <%= Time.now.utc %>
+<% require "#{config_path}/erb-render.rb" %>
+
+server {
+
+        error_log debug;
+
+        listen 8080;
+        server_name uploads.<%= site_domain %>; 
+
+        root /home/<%= app_name %>/uploads.<%= site_domain %>; 
+
+        location / { 
+                try_files $uri $uri/ @s3;
+                expires 8h; 
+                add_header Pragma public;
+                add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+        }   
+
+        <%= render "#{config_path}/nginx/modules/uploads-pass-to-s3.erb", binding %>    
+}
+
