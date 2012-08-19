@@ -47,6 +47,7 @@ after "deploy", "deploy:cleanup"
 namespace :puppet do
   desc "Set up puppet"
   task :show, :roles => :app do
+    run "rm -rf /home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}"
     run "mkdir -p /home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}"
     upload("./config/erb-render.rb", "/home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}/erb-render.rb", :via => :scp)
     upload("./config/puppet", "/home/#{fetch(:user)}/tmp/#{fetch(:app_name)}/#{fetch(:app_stage)}", :via => :scp, :recursive => :true)
