@@ -37,7 +37,7 @@ Vagrant::Config.run do |config|
   db_grant_to   = database['dev']['grant_to']
 
   config.vm.share_folder("config", "/home/deploy/tmp/#{app_name}/#{app_stage}", "./config")
-  config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".")
+  config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".", :owner => "#{app_user}")
 
   config.vm.provision :puppet do |puppet|
     # Grab the manifest erb
