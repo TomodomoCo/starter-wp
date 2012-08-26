@@ -25,5 +25,6 @@ group :development do
   gem "guard-compass", :git => "git://github.com/chrisvanpatten/guard-compass.git", :branch => "patch-1"
   gem "guard-livereload"
   gem "guard-jammit"
+  gem "guard-shell"
   gem "yajl-ruby"
 end
