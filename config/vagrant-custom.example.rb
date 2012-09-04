@@ -1,3 +1,4 @@
 Vagrant::Config.run do |config|
-  # Put your custom configuration here to override host-only networking
+  config.vm.forward_port 80, XXXX
+  config.vm.forward_port 22, XXXX
 end

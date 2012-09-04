@@ -1,13 +1,16 @@
 source :rubygems
 
-gem "capistrano"
+group :deploy do
+  gem "capistrano"
+  gem "vpmframe"
+end
 
 group :development do
   # Compass
   gem "compass"
 
   # Sass 3.2+ and Sass plugins
-  gem "sass", "~>3.2.0.alpha"
+  gem "sass", ">=3.2.0"
   gem "sass-globbing"
 
   # Compass extensions

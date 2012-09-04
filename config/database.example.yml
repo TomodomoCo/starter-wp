@@ -13,10 +13,7 @@ staging:
   grant_to:
   # "grant_to" is the name of the server that will be requesting access
   # to the database, if you're using a separate DB server.
-  # E.G. if your site is hosted on "content-server" and your database
-  # is hosted on "database-server", the "host" entry would be set to
-  # "database-server" and "grant_to" would be "content-server".
-  # If it's all in one place (as it is on dev) set both to "localhost".
+  # This should probably just be localhost.
 
 production:
   name:
