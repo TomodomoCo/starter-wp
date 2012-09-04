@@ -2,7 +2,7 @@ source :rubygems
 
 group :deploy do
   gem "capistrano"
-  gem "vpmframe"
+  gem "vpmframe", :git => "git://github.com/vanpattenmedia/vpmframe-gem.git", :branch => "master"
 end
 
 group :development do
