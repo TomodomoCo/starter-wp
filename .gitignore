@@ -18,6 +18,6 @@ site.pp
 vagrant-custom.rb
 
 # Site
-css/
-js/
-rgbapng
+public/content/themes/themename/css/
+public/content/themes/themename/js/
+public/content/themes/themename/img/
