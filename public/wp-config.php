@@ -11,6 +11,12 @@ $urlParts = explode('.', $_SERVER['HTTP_HOST']);
 if ($urlParts[0] == 'dev') {
 	// Local dev
 	define( 'WP_STAGE', 'dev' );
+
+	// Hide errors
+	ini_set( 'display_errors', 1 );
+	define( 'WP_DEBUG', true );
+	define( 'WP_DEBUG_DISPLAY', true );
+
 	foreach($config['dev'] as $db_variable => $value) {
 		define(('DB_' . strtoupper($db_variable)), $value);
 	}
@@ -18,6 +24,12 @@ if ($urlParts[0] == 'dev') {
 	// Staging
 	define( 'WP_STAGE', 'staging' );
 	define( 'DB_CLIENT_FLAGS', MYSQL_CLIENT_SSL );
+
+	// Hide errors
+	ini_set( 'display_errors', 1 );
+	define( 'WP_DEBUG', true );
+	define( 'WP_DEBUG_DISPLAY', true );
+
 	foreach($config['staging'] as $db_variable => $value) {
 		define(('DB_' . strtoupper($db_variable)), $value);
 	}
@@ -25,6 +37,12 @@ if ($urlParts[0] == 'dev') {
 	// Production
 	define( 'WP_STAGE', 'production' );
 	define( 'DB_CLIENT_FLAGS', MYSQL_CLIENT_SSL );
+
+	// Hide errors
+	ini_set( 'display_errors', 0 );
+	define( 'WP_DEBUG', false );
+	define( 'WP_DEBUG_DISPLAY', false );
+
 	foreach($config['production'] as $db_variable => $value) {
 		define(('DB_' . strtoupper($db_variable)), $value);
 	}
