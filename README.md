@@ -13,6 +13,14 @@ Thanks!
 
 - - -
 
+### Instructions
+
+Detailed instructions coming soon. In the meantime, you'll want to remember `bundle install`, `vagrant up`, `vagrant reload`, `bundle exec guard`, and `bundle exec cap`.
+
+Be sure to install [image_optim's dependencies](https://github.com/toy/image_optim).
+
+- - -
+
 ### Special thanks to
 
 *   [Mark Jaquith](http://markjaquith.com/)

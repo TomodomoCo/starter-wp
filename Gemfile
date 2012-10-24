@@ -19,6 +19,9 @@ group :development do
   gem "oily_png"
   gem "css_parser"
 
+  # Image optimization
+  gem "image_optim"
+
   # JavaScript
   gem "jammit"
   gem "therubyracer"
