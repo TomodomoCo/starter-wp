@@ -1,57 +1,63 @@
 <?php
-// ===================================================
-// Load database info and local development parameters
-// ===================================================
 
-require_once(dirname(__FILE__).'./../vendor/php/yaml/lib/sfYamlParser.php');
-$yaml = new sfYamlParser();
-$config = $yaml->parse(file_get_contents(dirname(__FILE__).'./../config/database.yml'));
+// Setup the YAML parser, load some yaml files
+require_once( dirname( __FILE__ ) . './../vendor/php/yaml/lib/sfYamlParser.php' );
+$yaml     = new sfYamlParser();
+$project  = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/project.yml' ) );
+$database = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/database.yml' ) );
 
-$urlParts = explode('.', $_SERVER['HTTP_HOST']);
-if ($urlParts[0] == 'dev') {
+// ===================================================
+// Setup the dev, staging, and production environments
+// ===================================================
+$urlParts = explode( '.', $_SERVER['HTTP_HOST'] );
+if ( $urlParts[0] == 'dev' ) {
 	// Local dev
-	define( 'WP_STAGE', 'dev' );
+	define( 'WP_STAGE',   'dev' );
+	define( 'WP_HOME',    'http://dev.' . $project['application']['domain'] );
+	define( 'WP_SITEURL', 'http://dev.' . $project['application']['domain'] . '/wp' );
 
-	// Hide errors
+	// Show errors
 	ini_set( 'display_errors', 1 );
 	define( 'WP_DEBUG', true );
 	define( 'WP_DEBUG_DISPLAY', true );
 
-	foreach($config['dev'] as $db_variable => $value) {
-		define(('DB_' . strtoupper($db_variable)), $value);
+	foreach ( $database['dev'] as $db_variable => $value ) {
+		define( ( 'DB_' . strtoupper( $db_variable ) ), $value );
 	}
-} elseif ($urlParts[0] == 'staging') {
+} elseif ( $urlParts[0] == 'staging' ) {
 	// Staging
 	define( 'WP_STAGE', 'staging' );
-	define( 'DB_CLIENT_FLAGS', MYSQL_CLIENT_SSL );
+	define( 'WP_HOME',    'http://staging.' . $project['application']['domain'] );
+	define( 'WP_SITEURL', 'http://staging.' . $project['application']['domain'] . '/wp' );
 
-	// Hide errors
+	// Show errors
 	ini_set( 'display_errors', 1 );
 	define( 'WP_DEBUG', true );
 	define( 'WP_DEBUG_DISPLAY', true );
 
-	foreach($config['staging'] as $db_variable => $value) {
-		define(('DB_' . strtoupper($db_variable)), $value);
+	foreach ( $database['staging'] as $db_variable => $value ) {
+		define( ( 'DB_' . strtoupper( $db_variable ) ), $value );
 	}
 } else {
 	// Production
 	define( 'WP_STAGE', 'production' );
-	define( 'DB_CLIENT_FLAGS', MYSQL_CLIENT_SSL );
+	define( 'WP_HOME',    'http://www.' . $project['application']['domain'] );
+	define( 'WP_SITEURL', 'http://www.' . $project['application']['domain'] . '/wp' );
 
 	// Hide errors
 	ini_set( 'display_errors', 0 );
 	define( 'WP_DEBUG', false );
 	define( 'WP_DEBUG_DISPLAY', false );
 
-	foreach($config['production'] as $db_variable => $value) {
-		define(('DB_' . strtoupper($db_variable)), $value);
+	foreach ( $database['production'] as $db_variable => $value ) {
+		define( ( 'DB_' . strtoupper( $db_variable ) ), $value );
 	}
 }
 
 // ==============
 // Misc. Settings
 // ==============
-define('WP_POST_REVISIONS', 8);
+define( 'WP_POST_REVISIONS', 8 );
 
 // ========================
 // Custom Content Directory
@@ -69,14 +75,14 @@ define( 'DB_COLLATE', '' );
 // Salts, for security
 // Grab these from: https://api.wordpress.org/secret-key/1.1/salt
 // ==============================================================
-define('AUTH_KEY',         'add');
-define('SECURE_AUTH_KEY',  'your');
-define('LOGGED_IN_KEY',    'own');
-define('NONCE_KEY',        'damn');
-define('AUTH_SALT',        'salts');
-define('SECURE_AUTH_SALT', 'here');
-define('LOGGED_IN_SALT',   'mmk?');
-define('NONCE_SALT',       'https://api.wordpress.org/secret-key/1.1/salt/');
+define('AUTH_KEY',         'Your');
+define('SECURE_AUTH_KEY',  'salts');
+define('LOGGED_IN_KEY',    'go');
+define('NONCE_KEY',        'in');
+define('AUTH_SALT',        'place');
+define('SECURE_AUTH_SALT', 'of');
+define('LOGGED_IN_SALT',   'this.');
+define('NONCE_SALT',       'Thanks!');
 
 // ============
 // Table prefix
