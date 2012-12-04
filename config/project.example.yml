@@ -13,6 +13,7 @@ application:
   servers:
     dev:
       ip: 127.0.0.1
+      http_port: 8080
       port: 2222
       user: vagrant
     staging:
