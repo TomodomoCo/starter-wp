@@ -3,7 +3,9 @@
 
 Vagrant::Config.run do |config|
 
+  ##
   # Set up wpframe
+  ##
   require "vpmframe/erb-render"
   require "yaml"
   require "erb"
@@ -21,18 +23,18 @@ Vagrant::Config.run do |config|
   app_deploy_to    = "/home/#{app_user}/#{app_domain}"
   app_access_users = project['application']['access_users']
 
-  db_name          = database['dev']['name']
-  db_user          = database['dev']['user']
-  db_password      = database['dev']['password']
-  db_host          = database['dev']['host']
-  db_grant_to      = database['dev']['grant_to']
+  db_name          = database[app_stage]['name']
+  db_user          = database[app_stage]['user']
+  db_password      = database[app_stage]['password']
+  db_host          = database[app_stage]['host']
+  db_grant_to      = database[app_stage]['grant_to']
 
   ##
   # Set up Vagrant
   ##
   config.vm.box = "vpm_vagrant"
-  config.vm.forward_port 80, project['application']['servers']['http_port']
-  config.vm.forward_port 22, project['application']['servers']['port']
+  config.vm.forward_port 80, project['application']['servers'][app_stage]['http_port']
+  config.vm.forward_port 22, project['application']['servers'][app_stage]['port']
 
   ##
   # Share the path to config files with the VM
