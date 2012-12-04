@@ -24,13 +24,16 @@ group :development do
 
   # JavaScript
   gem "jammit"
-  gem "therubyracer"
+  gem "therubyracer", "~> 0.11.0beta7"
   gem "uglifier"
 
   # Guard
-  gem "guard-compass", :git => "git://github.com/chrisvanpatten/guard-compass.git", :branch => "patch-1"
-  gem "guard-livereload"
+  gem "guard"
+  gem "guard-compass", :git => "git://github.com/guard/guard-compass.git"
+  gem "guard-livereload", "~> 1.0.3"
   gem "guard-jammit"
-  gem "guard-shell"
+  gem "guard-shell", :git => "git://github.com/hawx/guard-shell.git"
+  gem "guard-bundler"
   gem "yajl-ruby"
+  gem "rb-fsevent", "~> 0.9.1"
 end
