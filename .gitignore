@@ -4,6 +4,7 @@ public/content/uploads
 # Ignore things with passwords
 database.yml
 s3.yml
+wp-salts.php
 
 # Misc.
 .sass-cache

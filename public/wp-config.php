@@ -73,16 +73,8 @@ define( 'DB_COLLATE', '' );
 
 // ==============================================================
 // Salts, for security
-// Grab these from: https://api.wordpress.org/secret-key/1.1/salt
 // ==============================================================
-define('AUTH_KEY',         'Your');
-define('SECURE_AUTH_KEY',  'salts');
-define('LOGGED_IN_KEY',    'go');
-define('NONCE_KEY',        'in');
-define('AUTH_SALT',        'place');
-define('SECURE_AUTH_SALT', 'of');
-define('LOGGED_IN_SALT',   'this.');
-define('NONCE_SALT',       'Thanks!');
+include dirname( __FILE__ ) . './../config/wp-salts.php';
 
 // ============
 // Table prefix
