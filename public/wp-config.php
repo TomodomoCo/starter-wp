@@ -1,61 +1,99 @@
-# Load the project information
-set :project_yml_path, "./config/project.yml"
-project = YAML.load_file(fetch(:project_yml_path))
+<?php
 
-# require 'vpmframe/capistrano/base'
+// Setup the YAML parser, load some yaml files
+require_once( dirname( __FILE__ ) . './../vendor/php/yaml/lib/sfYamlParser.php' );
+$yaml     = new sfYamlParser();
+$project  = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/project.yml' ) );
+$database = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/database.yml' ) );
 
-# Require multistage for local->staging->production deployment...
-require 'capistrano/ext/multistage'
+// ===================================================
+// Setup the dev, staging, and production environments
+// ===================================================
+$urlParts = explode( '.', $_SERVER['HTTP_HOST'] );
+if ( $urlParts[0] == 'dev' ) {
+	// Local dev
+	define( 'WP_STAGE',   'dev' );
+	define( 'WP_HOME',    'http://dev.' . $project['application']['domain'] );
+	define( 'WP_SITEURL', 'http://dev.' . $project['application']['domain'] . '/wp' );
 
-set :scm,                     :git
-set :git_enable_submodules,   1
-set :stages,                  ["staging", "production"]
-set :default_stage,           "staging"
-default_run_options[:pty]   = true
-ssh_options[:forward_agent] = true
+	// Show errors
+	ini_set( 'display_errors', 1 );
+	define( 'WP_DEBUG', true );
+	define( 'WP_DEBUG_DISPLAY', true );
 
-set :application,      project["application"]["name"]
-set :app_name,         project["application"]["name"]
-set :user,             project["application"]["deploy_user"]
-set :app_user,         project["application"]["user"]
-set :app_group,        project["application"]["group"]
-set :app_access_users, project["application"]["access_users"]
-set :app_theme,        project["application"]["theme"]
-set :repository,       project["application"]["repo"]
-set :site_domain,      project["application"]["domain"]
+	foreach ( $database['dev'] as $db_variable => $value ) {
+		define( ( 'DB_' . strtoupper( $db_variable ) ), $value );
+	}
+	$table_prefix = DB_TBL_PREFIX;
+} elseif ( $urlParts[0] == 'staging' ) {
+	// Staging
+	define( 'WP_STAGE', 'staging' );
+	define( 'WP_HOME',    'http://staging.' . $project['application']['domain'] );
+	define( 'WP_SITEURL', 'http://staging.' . $project['application']['domain'] . '/wp' );
 
-# Load vpmframe requirements
-require 'vpmframe/erb-render'
-require 'vpmframe/capistrano/assets'
-require 'vpmframe/capistrano/puppet'
-require 'vpmframe/capistrano/credentials'
-require 'vpmframe/capistrano/permissions'
-require 'vpmframe/capistrano/wp-salts'
+	// Show errors
+	ini_set( 'display_errors', 1 );
+	define( 'WP_DEBUG', true );
+	define( 'WP_DEBUG_DISPLAY', true );
 
-# Don't do Railsy things...
-namespace :deploy do
-  task :finalize_update do transaction do end end
-  task :migrate do end
+	foreach ( $database['staging'] as $db_variable => $value ) {
+		define( ( 'DB_' . strtoupper( $db_variable ) ), $value );
+	}
+	$table_prefix = DB_TBL_PREFIX;
+} else {
+	// Production
+	define( 'WP_STAGE', 'production' );
+	define( 'WP_HOME',    'http://www.' . $project['application']['domain'] );
+	define( 'WP_SITEURL', 'http://www.' . $project['application']['domain'] . '/wp' );
 
-  desc "Restart nginx"
-  task :restart do
-    run "#{sudo} nginx -s reload"
-  end
-end
+	// Hide errors
+	ini_set( 'display_errors', 0 );
+	define( 'WP_DEBUG', false );
+	define( 'WP_DEBUG_DISPLAY', false );
 
-# Setup related tasks
-before "deploy:setup", "puppet:show"
-after "deploy:setup", "permissions:fix_setup_ownership", "salts:generate_wp_salts"
+	foreach ( $database['production'] as $db_variable => $value ) {
+		define( ( 'DB_' . strtoupper( $db_variable ) ), $value );
+	}
+	$table_prefix = DB_TBL_PREFIX;
+}
 
-# Upload and symlink DB credentials
-before "deploy:create_symlink", "credentials:upload_db_cred", "credentials:upload_s3_cred", "credentials:symlink_db_cred", "salts:symlink_wp_salts"
+// ==============
+// Misc. Settings
+// ==============
+define( 'WP_POST_REVISIONS', 8 );
 
-# Compile and upload assets
-before "deploy", "assets:local_temp_clone", "assets:compile_local_css", "assets:compile_local_js", "assets:compile_local_images"
-before "deploy:create_symlink", "assets:upload_asset_css", "assets:upload_asset_js", "assets:upload_asset_images"
+// ========================
+// Custom Content Directory
+// ========================
+define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/content' );
+define( 'WP_CONTENT_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/content' );
 
-# Fix ownership
-before "deploy:restart", "permissions:fix_deploy_ownership"
+// ================================================
+// You almost certainly do not want to change these
+// ================================================
+define( 'DB_CHARSET', 'utf8' );
+define( 'DB_COLLATE', '' );
 
-# Cleanup
-after "deploy", "deploy:cleanup", "assets:local_temp_cleanup"
+// ==============================================================
+// Salts, for security
+// ==============================================================
+include dirname( __FILE__ ) . './../config/wp-salts.php';
+
+// ================================
+// Language
+// Leave blank for American English
+// ================================
+define( 'WPLANG', '' );
+
+// ===========
+// Hide errors
+// ===========
+ini_set( 'display_errors', 0 );
+define( 'WP_DEBUG_DISPLAY', false );
+
+// ===================
+// Bootstrap WordPress
+// ===================
+if ( !defined( 'ABSPATH' ) )
+	define( 'ABSPATH', dirname( __FILE__ ) . '/wp/' );
+require_once( ABSPATH . 'wp-settings.php' );
