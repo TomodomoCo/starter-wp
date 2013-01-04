@@ -14,14 +14,14 @@ Vagrant::Config.run do |config|
   database = YAML.load_file("./config/database.yml")
 
   app_stage        = "dev"
-  app_theme        = project['application']['theme']
-  app_name         = project['application']['name']
-  app_user         = project['application']['user']
-  app_group        = project['application']['group']
-  site_domain      = project['application']['domain']
-  app_domain       = "#{app_stage}." + project['application']['domain']
+  app_theme        = project['theme']
+  app_name         = project['name']
+  app_user         = project['user']
+  app_group        = project['group']
+  site_domain      = project['domain']
+  app_domain       = "#{app_stage}." + project['domain']
   app_deploy_to    = "/home/#{app_user}/#{app_domain}"
-  app_access_users = project['application']['access_users']
+  app_access_users = project['access_users']
 
   db_name          = database[app_stage]['name']
   db_user          = database[app_stage]['user']
@@ -33,8 +33,8 @@ Vagrant::Config.run do |config|
   # Set up Vagrant
   ##
   config.vm.box = "vpm_vagrant"
-  config.vm.forward_port 80, project['application']['servers'][app_stage]['http_port']
-  config.vm.forward_port 22, project['application']['servers'][app_stage]['port']
+  config.vm.forward_port 80, project['stage'][app_stage]['http_port']
+  config.vm.forward_port 22, project['stage'][app_stage]['port']
 
   ##
   # Share the path to config files with the VM

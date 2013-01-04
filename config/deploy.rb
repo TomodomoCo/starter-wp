@@ -2,8 +2,6 @@
 set :project_yml_path, "./config/project.yml"
 project = YAML.load_file(fetch(:project_yml_path))
 
-# require 'vpmframe/capistrano/base'
-
 # Require multistage for local->staging->production deployment...
 require 'capistrano/ext/multistage'
 
@@ -14,15 +12,15 @@ set :default_stage,           "staging"
 default_run_options[:pty]   = true
 ssh_options[:forward_agent] = true
 
-set :application,      project["application"]["name"]
-set :app_name,         project["application"]["name"]
-set :user,             project["application"]["deploy_user"]
-set :app_user,         project["application"]["user"]
-set :app_group,        project["application"]["group"]
-set :app_access_users, project["application"]["access_users"]
-set :app_theme,        project["application"]["theme"]
-set :repository,       project["application"]["repo"]
-set :site_domain,      project["application"]["domain"]
+set :application,      project['name']
+set :app_name,         project['name']
+set :user,             project['deploy_user']
+set :app_user,         project['user']
+set :app_group,        project['group']
+set :app_access_users, project['access_users']
+set :app_theme,        project['theme']
+set :repository,       project['repo']
+set :site_domain,      project['domain']
 
 # Load vpmframe requirements
 require 'vpmframe/erb-render'

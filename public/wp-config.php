@@ -13,8 +13,8 @@ $urlParts = explode( '.', $_SERVER['HTTP_HOST'] );
 if ( $urlParts[0] == 'dev' ) {
 	// Local dev
 	define( 'WP_STAGE',   'dev' );
-	define( 'WP_HOME',    'http://dev.' . $project['application']['domain'] );
-	define( 'WP_SITEURL', 'http://dev.' . $project['application']['domain'] . '/wp' );
+	define( 'WP_HOME',    'http://dev.' . $project['domain'] );
+	define( 'WP_SITEURL', 'http://dev.' . $project['domain'] . '/wp' );
 
 	// Show errors
 	ini_set( 'display_errors', 1 );
@@ -28,8 +28,8 @@ if ( $urlParts[0] == 'dev' ) {
 } elseif ( $urlParts[0] == 'staging' ) {
 	// Staging
 	define( 'WP_STAGE', 'staging' );
-	define( 'WP_HOME',    'http://staging.' . $project['application']['domain'] );
-	define( 'WP_SITEURL', 'http://staging.' . $project['application']['domain'] . '/wp' );
+	define( 'WP_HOME',    'http://staging.' . $project['domain'] );
+	define( 'WP_SITEURL', 'http://staging.' . $project['domain'] . '/wp' );
 
 	// Show errors
 	ini_set( 'display_errors', 1 );
@@ -43,8 +43,8 @@ if ( $urlParts[0] == 'dev' ) {
 } else {
 	// Production
 	define( 'WP_STAGE', 'production' );
-	define( 'WP_HOME',    'http://www.' . $project['application']['domain'] );
-	define( 'WP_SITEURL', 'http://www.' . $project['application']['domain'] . '/wp' );
+	define( 'WP_HOME',    'http://www.' . $project['domain'] );
+	define( 'WP_SITEURL', 'http://www.' . $project['domain'] . '/wp' );
 
 	// Hide errors
 	ini_set( 'display_errors', 0 );

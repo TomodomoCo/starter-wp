@@ -1,19 +1,19 @@
 # Require some gems
-require "rgbapng"
+require 'rgbapng'
 require 'sass-globbing'
 
 # Load project config
-require "yaml"
+require 'yaml'
 project  = YAML.load_file("./config/project.yml")
 
 # Path to theme from project root
 project_path      = "./"
 
 # Where's stuff being spit out?
-css_dir           = "public/content/themes/" + project['application']['theme'] + "/css"
-images_dir        = "public/content/themes/" + project['application']['theme'] + "/img"
-javascripts_dir   = "public/content/themes/" + project['application']['theme'] + "/js"
-fonts_dir         = "public/content/themes/" + project['application']['theme'] + "/fonts"
+css_dir           = "public/content/themes/" + project['theme'] + "/css"
+images_dir        = "public/content/themes/" + project['theme'] + "/img"
+javascripts_dir   = "public/content/themes/" + project['theme'] + "/js"
+fonts_dir         = "public/content/themes/" + project['theme'] + "/fonts"
 
 # Where are we pulling from?
 sass_dir          = "app/assets/sass"
