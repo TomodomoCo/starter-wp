@@ -8,7 +8,6 @@ application:
 
   theme: themename
   domain: domain.com
-  tbl_prefix: wp_
 
   servers:
     dev:
