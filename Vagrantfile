@@ -44,8 +44,8 @@ Vagrant::Config.run do |config|
   ##
   # Swap us to set permissions correctly
   ##
-  config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".")
-  # config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".", :owner => "#{app_user}")
+  #config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".")
+  config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".", :owner => "#{app_user}")
 
   ##
   # Start your provisioners!
