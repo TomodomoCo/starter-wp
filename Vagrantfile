@@ -34,7 +34,7 @@ Vagrant::Config.run do |config|
   ##
   config.vm.box = "vpm_vagrant"
   config.vm.forward_port 80, project['stage'][app_stage]['http_port']
-  config.vm.forward_port 22, project['stage'][app_stage]['port']
+  config.vm.forward_port 22, project['stage'][app_stage]['ssh_port']
 
   ##
   # Share the path to config files with the VM

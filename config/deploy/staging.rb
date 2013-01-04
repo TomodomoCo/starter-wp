@@ -9,7 +9,7 @@ database = YAML.load_file(fetch(:database_yml_path))
 
 # Stage-specific server options
 set :app_server, project['stage'][fetch(:app_stage)]['ip']
-set :app_port,   project['stage'][fetch(:app_stage)]['port']
+set :app_port,   project['stage'][fetch(:app_stage)]['ssh_port']
 
 server fetch(:app_server), :app, :web, :db, :primary => true
 ssh_options[:port] = fetch(:app_port)
