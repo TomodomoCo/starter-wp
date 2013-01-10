@@ -1,14 +1,16 @@
 <?php
 
-// Setup the YAML parser, load some yaml files
+/**
+ * Setup the YAML parser, load some yaml files
+ */
 require_once( dirname( __FILE__ ) . './../vendor/php/yaml/lib/sfYamlParser.php' );
 $yaml     = new sfYamlParser();
 $project  = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/project.yml' ) );
 $database = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/database.yml' ) );
 
-// ===================================================
-// Setup the dev, staging, and production environments
-// ===================================================
+/**
+ * Setup the dev, staging, and production environments
+ */
 $urlParts = explode( '.', $_SERVER['HTTP_HOST'] );
 if ( $urlParts[0] == 'dev' ) {
 	/**
