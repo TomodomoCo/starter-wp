@@ -15,8 +15,7 @@ $failure_message = <<<EOT
 </head>
 <body>
 <h1>Sorry!</h1>
-<p>We are having some trouble loading the site at the moment. Rest assured that the tech support teams have been dispatched and will be fixing
-this shortly!</p>
+<p>We are having some trouble loading the site at the moment. Rest assured that the tech support teams have been dispatched and will be fixing this shortly!</p>
 <p>Please accept our apologies.</p>
 </body>
 </html>
