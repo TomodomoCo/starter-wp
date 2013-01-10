@@ -80,6 +80,16 @@ if ( $urlParts[0] == 'dev' ) {
 }
 
 /**
+ * Misc. Settings
+ */
+define( 'WP_POST_REVISIONS', 8 );
+
+/**
+ * Language (leave blank for American English)
+ */
+define( 'WPLANG', '' );
+
+/**
  * Path to WordPress
  */
 define( 'WP_SITEURL', WP_HOME . '/wp' );
@@ -89,16 +99,6 @@ define( 'WP_SITEURL', WP_HOME . '/wp' );
  */
 define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/content' );
 define( 'WP_CONTENT_URL', WP_HOME . '/content' );
-
-/**
- * Misc. Settings
- */
-define( 'WP_POST_REVISIONS', 8 );
-
-/**
- * Language (leave blank for American English)
- */
-define( 'WPLANG', '' );
 
 /**
  * Debug settings
