@@ -8,10 +8,40 @@ $yaml     = new sfYamlParser();
 $project  = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/project.yml' ) );
 $database = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/database.yml' ) );
 
+$failure_message = <<<EOT
+<html>
+<head>
+<title>Sorry!</title>
+</head>
+<body>
+<h1>Sorry!</h1>
+<p>We are having some trouble loading the site at the moment. Rest assured that the tech support teams have been dispatched and will be fixing
+this shortly!</p>
+<p>Please accept our apologies.</p>
+</body>
+</html>
+EOT;
+
+/**
+ * Sanity checking of the imported YAML.
+ */
+if (
+	! is_array( $project ) ||
+	! is_array( $database ) ||
+	count( $project ) < 1 ||
+	count( $database ) < 1 ||
+	! array_key_exists( 'domain', $project )
+) {
+	header('HTTP/1.1 503 Service Unavailable');
+	echo $failure_message;
+	trigger_error( 'WPFRAME FATAL: === The project.yml and/or database.yml files could not be parsed for the ' . strip_tags( $_SERVER['SERVER_NAME'] ) . ' site.', E_USER_ERROR );
+	die();
+}
+
 /**
  * Setup the dev, staging, and production environments
  */
-$urlParts = explode( '.', $_SERVER['HTTP_HOST'] );
+$urlParts = explode( '.', $_SERVER['SERVER_NAME'] );
 if ( $urlParts[0] == 'dev' ) {
 	/**
 	 * DEV
@@ -64,10 +94,18 @@ define( 'WP_SITEURL', WP_HOME . '/wp' );
 /**
  * Set up databases
  */
-foreach ( $database[ WP_STAGE ] as $db_variable => $value ) {
-	define( ( 'DB_' . strtoupper( $db_variable ) ), $value );
+if ( array_key_exists( WP_STAGE, $database ) ) {
+	foreach ( $database[ WP_STAGE ] as $db_variable => $value ) {
+		define( ( 'DB_' . strtoupper( $db_variable ) ), $value );
+	}
+	$table_prefix = DB_TBL_PREFIX;
 }
-$table_prefix = DB_TBL_PREFIX;
+else {
+	header('HTTP/1.1 503 Service Unavailable');
+	echo $failure_message;
+	trigger_error( 'WPFRAME FATAL: === The database.yml file does not have a \'' . strip_tags( WP_STAGE ) . '\' stage, so the DB details cannot be loaded for the ' . strip_tags( $_SERVER['SERVER_NAME'] ) . ' site.', E_USER_ERROR );
+	die();
+}
 
 /**
  * Misc. Settings
@@ -78,7 +116,7 @@ define( 'WP_POST_REVISIONS', 8 );
  * Custom Content Directory
  */
 define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/content' );
-define( 'WP_CONTENT_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/content' );
+define( 'WP_CONTENT_URL', 'http://' . strip_tags( $_SERVER['SERVER_NAME'] ) . '/content' );
 
 /**
  * You almost certainly do not want to change these
@@ -89,7 +127,12 @@ define( 'DB_COLLATE', '' );
 /**
  * Salts, for security
  */
-include dirname( __FILE__ ) . './../config/wp-salts.php';
+if ( @file_exists( dirname( __FILE__ ) . './../config/wp-salts.php' ) ) {
+	include dirname( __FILE__ ) . './../config/wp-salts.php';
+}
+else {
+	trigger_error( 'There is no config/wp-salts.php file for the ' . strip_tags( $_SERVER['SERVER_NAME'] ) . ' site.' , E_USER_WARNING );
+}
 
 /**
  * Language
