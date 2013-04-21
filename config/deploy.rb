@@ -59,9 +59,7 @@ before "deploy:create_symlink",
 # Compile and upload assets
 before "deploy",
   "assets:local_temp_clone",
-  "assets:compile_local_images",
-  "assets:compile_local_css",
-  "assets:compile_local_js"
+  "assets:compile_local_assets"
 
 before "deploy:create_symlink",
   "assets:upload_asset_css",

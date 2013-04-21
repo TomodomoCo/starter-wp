@@ -4,9 +4,9 @@ This is our highly-opinionated framework for developing and deploying new WordPr
 
 It uses **Puppet**, **Capistrano**, **Vagrant**, and a number of other technologies for front-end scaffolding.
 
-We hope this provides a good starting point for others looking to set up a similar development process (Vagrant -> Staging -> Production with Nginx, PHP-FPM, and Varnish). We probably won't be developing this heavily, although we will certainly give consideration to any pull requests and answer any questions we receive.
+We hope this provides a good starting point for others looking to set up a similar development process (Vagrant -> Staging -> Production with Nginx, PHP-FPM, and Varnish). The goal is for a stable, infrequently changing base for WordPress development. Forgive our lack of regular updates... or instead, consider that a feature.
 
-Thanks!
+Thanks for your support!
 
 [Chris Van Patten](https://github.com/chrisvanpatten) and [Peter Upfold](https://github.com/PeterUpfold)<br>
 (The [Van Patten Media](http://www.vanpattenmedia.com/) Team)
@@ -16,6 +16,15 @@ Thanks!
 ### Instructions
 
 Detailed instructions coming soon. In the meantime, you'll want to remember `bundle install`, `vagrant up`, `vagrant reload`, `bundle exec guard`, and `bundle exec cap`.
+
+Customise (and, where appropriate, remove the `.example` from) these files:
++ assets.yml
++ database.yml
++ project.yml
++ s3.yml
++ Makefile
+
+Add your theme in `public/content/themes/`.
 
 Be sure to install [image_optim's dependencies](https://github.com/toy/image_optim).
 
