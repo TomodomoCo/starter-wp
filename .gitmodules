@@ -4,9 +4,6 @@
 [submodule "public/wp"]
 	path = public/wp
 	url = git://github.com/WordPress/WordPress.git
-[submodule "vendor/php/quickassets"]
-	path = vendor/php/quickassets
-	url = git://github.com/vanpattenmedia/quickassets.git
 [submodule "config/puppet/modules"]
 	path = config/puppet/modules
 	url = git://github.com/vanpattenmedia/vpmframe-module-puppet.git
