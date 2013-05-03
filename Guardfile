@@ -17,7 +17,7 @@ group :development do
     end
 
     # css
-    watch(%r{(.*)\.s[ac]ss$})
+    watch(%r{(.*)\.s[ac]ss$}) do
       `make css`
     end
 
