@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Vagrant::Config.run do |config|
+Vagrant.configure("2") do |config|
 
   ##
   # Set up wpframe
@@ -33,19 +33,19 @@ Vagrant::Config.run do |config|
   # Set up Vagrant
   ##
   config.vm.box = "vpm_vagrant"
-  config.vm.forward_port 80, project['stage'][app_stage]['http_port']
-  config.vm.forward_port 22, project['stage'][app_stage]['ssh_port']
+  config.vm.network :forwarded_port, guest: 80, host: project['stage'][app_stage]['http_port']
+  config.vm.network :forwarded_port, guest: 22, host: project['stage'][app_stage]['ssh_port']
 
   ##
   # Share the path to config files with the VM
   ##
-  config.vm.share_folder("config", "/home/deploy/tmp/#{app_name}/#{app_stage}", "./config")
+  config.vm.synced_folder "./config", "/home/deploy/tmp/#{app_name}/#{app_stage}"
 
   ##
   # Swap us to set permissions correctly
   ##
-  #config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".")
-  config.vm.share_folder("v-root", "#{app_deploy_to}/current", ".", :owner => "#{app_user}")
+  #config.vm.synced_folder ".", "#{app_deploy_to}/current"
+  config.vm.synced_folder ".", "#{app_deploy_to}/current", :owner => "#{app_user}"
 
   ##
   # Start your provisioners!
