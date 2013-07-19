@@ -2,7 +2,12 @@ name: projectname
 repo: git://github.com/username/projectname.git
 deploy_user: deploy
 user: projectuser
-access_users: [deploy, projectuser, user1, user2, user3]
+access_users:
+  - deploy
+  - projectuser
+  - user1
+  - user2
+  - user3
 group: group
 theme: themename
 domain: domain.com
