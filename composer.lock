@@ -3,20 +3,20 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c59e1949eabddc3f9e35cdc40b4ba4f2",
+    "hash": "da193ea6bffcaceae7051e990f517296",
     "packages": [
         {
             "name": "johnpbloch/wordpress",
-            "version": "3.7",
+            "version": "3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnpbloch/wordpress.git",
-                "reference": "498311577d761c1de30dd178f3845c4a468bd8bf"
+                "reference": "0363288f646eed9fd5214acc71ef475250f1592d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress/zipball/498311577d761c1de30dd178f3845c4a468bd8bf",
-                "reference": "498311577d761c1de30dd178f3845c4a468bd8bf",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress/zipball/0363288f646eed9fd5214acc71ef475250f1592d",
+                "reference": "0363288f646eed9fd5214acc71ef475250f1592d",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                 "blog",
                 "cms"
             ],
-            "time": "2013-10-24 20:45:59"
+            "time": "2013-10-29 20:15:58"
         },
         {
             "name": "johnpbloch/wordpress-core-installer",
@@ -89,17 +89,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "dev-master",
+            "version": "v2.3.6",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "1f7cabb841e62ec49615bd965ac780fd994b3f64"
+                "reference": "6bb881b948368482e1abf1a75c08bcf88a1c5fc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/1f7cabb841e62ec49615bd965ac780fd994b3f64",
-                "reference": "1f7cabb841e62ec49615bd965ac780fd994b3f64",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/6bb881b948368482e1abf1a75c08bcf88a1c5fc3",
+                "reference": "6bb881b948368482e1abf1a75c08bcf88a1c5fc3",
                 "shasum": ""
             },
             "require": {
@@ -108,7 +108,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.3-dev"
                 }
             },
             "autoload": {
@@ -132,7 +132,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-10-17 11:48:11"
+            "time": "2013-09-22 18:04:39"
         }
     ],
     "packages-dev": [
@@ -142,9 +142,9 @@
 
     ],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "symfony/yaml": 20
-    },
+    "stability-flags": [
+
+    ],
     "platform": [
 
     ],

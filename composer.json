@@ -12,7 +12,6 @@
 			"email": "chris@vanpattenmedia.com"
 		}
 	],
-	"minimum-stability": "dev",
 	"repositories": [
 		{
 			"type": "composer",
@@ -20,7 +19,7 @@
 		}
 	],
 	"require": {
-		"symfony/yaml": "dev-master",
+		"symfony/yaml": "~2.0",
 		"johnpbloch/wordpress": "~3.6"
 	},
 	"extra": {
