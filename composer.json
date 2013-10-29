@@ -6,6 +6,13 @@
 	"config": {
 		"vendor-dir": "vendor/composer"
 	},
+	"authors": [
+		{
+			"name": "Chris Van Patten",
+			"email": "chris@vanpattenmedia.com"
+		}
+	],
+	"minimum-stability": "dev",
 	"repositories": [
 		{
 			"type": "composer",
