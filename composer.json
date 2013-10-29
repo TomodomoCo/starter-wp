@@ -9,6 +9,7 @@
 		}
 	],
 	"require": {
+		"symfony/yaml": "dev-master",
 		"johnpbloch/wordpress": "~3.6"
 	},
 	"extra": {

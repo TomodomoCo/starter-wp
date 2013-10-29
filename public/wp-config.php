@@ -1,13 +1,21 @@
 <?php
 
 /**
+ * Require the Composer autoloader
+ */
+require_once( ABSPATH . '../../vendor/composer/autoload.php' );
+
+/**
  * Setup the YAML parser, load some yaml files
  */
-require_once( dirname( __FILE__ ) . './../vendor/php/yaml/lib/sfYamlParser.php' );
-$yaml     = new sfYamlParser();
+use Symfony\Component\Yaml\Parser;
+$yaml     = new Parser();
 $project  = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/project.yml' ) );
 $database = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/database.yml' ) );
 
+/**
+ * Throw an error if things break
+ */
 $failure_message = <<<EOT
 <html>
 <head>
