@@ -25,6 +25,7 @@ set :site_domain,      project['domain']
 # Load vpmframe requirements
 require 'vpmframe/erb-render'
 require 'vpmframe/capistrano/assets'
+require 'vpmframe/capistrano/composer'
 require 'vpmframe/capistrano/puppet'
 require 'vpmframe/capistrano/credentials'
 require 'vpmframe/capistrano/permissions'
@@ -65,6 +66,13 @@ before "deploy:create_symlink",
   "assets:upload_asset_css",
   "assets:upload_asset_js",
   "assets:upload_asset_images"
+
+# Install composer dependencies
+after "deploy:update_code",
+  "composer:install"
+
+before "composer:install",
+  "composer:copy_vendors"
 
 # Fix ownership
 before "deploy:restart",
