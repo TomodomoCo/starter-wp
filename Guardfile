@@ -25,8 +25,8 @@ group :development do
     watch(%r{(?:javascripts)(/.+)\.(js)}) do
       `make javascripts`
     end
-	
-	watch('config/assets.yml') do
+
+    watch('config/assets.yml') do
       `make javascripts`
     end
 
