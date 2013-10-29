@@ -1,0 +1,22 @@
+{
+	"config": {
+		"vendor-dir": "vendor/composer"
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url" : "http://wpackagist.org"
+		}
+	],
+	"require": {
+		"johnpbloch/wordpress": "~3.6"
+	},
+	"extra": {
+		"wordpress-install-dir": "public/wp",
+		"installer-paths": {
+			"public/content/plugins/{$name}":    ["type:wordpress-plugin"],
+			"public/content/mu-plugins/{$name}": ["type:wordpress-muplugin"],
+			"public/content/themes/{$name}":     ["type:wordpress-theme"]
+		}
+	}
+}
