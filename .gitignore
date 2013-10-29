@@ -1,5 +1,4 @@
 # WordPress
-public/content/uploads
 
 # Ignore things with passwords
 database.yml
@@ -19,6 +18,9 @@ site.pp
 vagrant-custom.rb
 
 # Site
+public/content/uploads/
+public/wp/
+
 public/content/themes/themename/css/
 public/content/themes/themename/js/
 public/content/themes/themename/img/
