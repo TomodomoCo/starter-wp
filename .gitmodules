@@ -1,9 +1,6 @@
 [submodule "vendor/php/yaml"]
 	path = vendor/php/yaml
 	url = git://github.com/fabpot/yaml.git
-[submodule "public/wp"]
-	path = public/wp
-	url = git://github.com/WordPress/WordPress.git
 [submodule "config/puppet/modules"]
 	path = config/puppet/modules
 	url = git://github.com/vanpattenmedia/vpmframe-module-puppet.git
