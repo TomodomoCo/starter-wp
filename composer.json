@@ -1,4 +1,8 @@
 {
+	"name": "vanpattenmedia/wpframe",
+	"description": "Fast WordPress scaffolding",
+	"type": "project",
+	"license": "BSD-3-Clause",
 	"config": {
 		"vendor-dir": "vendor/composer"
 	},
