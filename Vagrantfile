@@ -50,7 +50,7 @@ Vagrant.configure("2") do |config|
   ##
   # Start your provisioners!
   ##
-  config.vm.provision :puppet do |puppet|
+  config.vm.provision "puppet" do |puppet|
     # Grab the manifest erb
     pp_erb = ERB.new( File.read('config/puppet/site.pp.erb') )
 
