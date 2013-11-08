@@ -1,0 +1,14 @@
+# Rendered: <%= Time.now.utc %>
+#
+# Varnish vcl_fetch for this site
+
+# Do not fail to include the if line below, or your rules will become Varnish-global
+if (req.http.host ~ "<%= site_domain %>$") {
+
+	# Cookie handling -- override if you have custom cookies that need to be dynamic
+	# remove all server-sent Set-Cookies.
+	if (!(req.url ~ "wp-(login|admin)")) {
+		unset beresp.http.set-cookie;
+	}
+
+}

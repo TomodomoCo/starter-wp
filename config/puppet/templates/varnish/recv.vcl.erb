@@ -1,0 +1,17 @@
+# Rendered: <%= Time.now.utc %>
+#
+# Varnish vcl_recv for this site that loads from modules/
+
+# Do not fail to include the if line below, or your rules will become Varnish-global
+if (req.http.host ~ "<%= site_domain %>$") {
+
+	<% if app_stage == 'dev' %>
+	return(pass);
+	<% end %>
+
+	# Drop any cookies sent to WordPress, except wordpress_ cookies
+	if (!(req.url ~ "wp-(login|admin|comments-post)") && !(req.http.Cookie ~ "wordpress_")) {
+		remove req.http.Cookie;
+	} 
+
+}
