@@ -10,6 +10,3 @@
 [submodule "config/varnish/modules"]
 	path = config/varnish/modules
 	url = git://github.com/vanpattenmedia/vpmframe-module-varnish.git
-[submodule "config/scripts/modules"]
-	path = config/scripts/modules
-	url = git://github.com/vanpattenmedia/vpmframe-module-scripts.git
