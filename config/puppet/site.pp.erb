@@ -19,7 +19,10 @@ $app_group     = "<%= app_group %>"
 # random minute for cron
 $random_minute = "<%= rand(60) %>"
 
-$config_path = "/home/deploy/tmp/#{app_name}/#{app_stage}/puppet/modules"
+<%
+config_path  = "/home/deploy/tmp/#{app_name}/#{app_stage}/puppet/templates"
+%>
+$config_path = "/home/deploy/tmp/#{app_name}/#{app_stage}/puppet/templates"
 
 
 ##################################
@@ -106,7 +109,7 @@ file { "/etc/resolv.conf":
 	owner => root,
 	group => root,
 	mode => 644,
-	source => "<%= config_path %>/puppet/modules/vagrant_resolv.conf"
+	source => "<%= config_path %>/etc/vagrant_resolv.conf"
 }
 <% end %>
 
@@ -370,7 +373,7 @@ package { "varnish":
 file { "/etc/default/varnish":
 	owner => root,
 	group => root,
-	source => "<%= config_path %>/varnish/modules/vagrant_etc_default_varnish",
+	source => "<%= config_path %>/varnish/vagrant/vagrant_etc_default_varnish",
 	require => Package["varnish"]
 }
 <% end %>
@@ -378,7 +381,7 @@ file { "/etc/default/varnish":
 file { "/etc/varnish/default.vcl":
 	owner => root,
 	group => root,
-	source => "<%= config_path %>/varnish/modules/global/default.vcl",
+	source => "<%= config_path %>/varnish/default.vcl",
 	require => Package["varnish"]
 }
 
@@ -458,31 +461,4 @@ mysqldb { "<%= db_name %>":
 	password => "<%= db_password %>",
 	host => "<%= db_host %>",
 	grant_to => "<%= db_grant_to %>",
-}
-
-
-##################################
-#                                #
-#   'Cloud uploads' S3 script    #
-#                                #
-##################################
-
-<% mailto = 'someone@example.com' %>
-
-file { "/home/<%= app_user %>/bin/uploads_to_s3.py":
-	ensure => file,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
-	mode => 775, # keep it executable!
-	source => "<%= config_path %>/scripts/modules/uploads_to_s3.py",
-}
-
-cron_job { "<%= app_name %>_uploads_to_s3":
-	interval => "d", # use cron.d folder for user-specific execution
-	script   => "# created by Puppet
-MAILTO=\"<%= mailto %>\"
-
-# m              h  dom   mon   dow    user             command
-$random_minute  4  *     *     6      <%= app_user %>  /usr/bin/nice -n 17 /home/<%= app_user %>/bin/uploads_to_s3.py /home/<%= app_user %>/<%= app_domain %>/shared/config/s3.yml /home/<%= app_user %>/uploads.<%= site_domain %>/
-	",
 }
