@@ -61,6 +61,11 @@ server {
 
 	location / {
 		try_files $uri $uri/ @rewrites;
+
+		<% if app_stage == "staging" %>
+		auth_basic           "Restricted";
+		auth_basic_user_file <%= app_deploy_to %>/shared/config/htpasswd;
+		<% end %>
 	}
 
 	location @rewrites {
@@ -98,7 +103,7 @@ server {
 	###################
 	#      Images     #
 	###################
-	location ~* \.(?:ico|gif|jpe?g|png)$ {	
+	location ~* \.(?:ico|gif|jpe?g|png)$ {
 		# Caching
 		<% if app_stage != "dev" %>
 		expires 7d;
@@ -110,6 +115,7 @@ server {
 		add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
 		<% end %>
 	}
+
 
 	###################
 	#     CSS & JS    #

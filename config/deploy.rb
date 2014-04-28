@@ -54,6 +54,7 @@ after "deploy:setup",
 before "deploy:create_symlink",
   "credentials:upload_db_cred",
   "credentials:upload_s3_cred",
+  "credentials:upload_htpasswd_cred",
   "credentials:symlink_db_cred",
   "salts:symlink_wp_salts"
 
