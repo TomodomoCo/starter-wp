@@ -11,7 +11,7 @@ javascripts:
 
 images:
 	mkdir -p $(COMPILED)/img/
-	cp -R $(RAW)/images/ $(COMPILED)/img/
+	cp -R $(RAW)/images/. $(COMPILED)/img/
 	image_optim --recursive --no-pngout $(COMPILED)/img/
 
 clean: clean-css clean-javascripts clean-images
