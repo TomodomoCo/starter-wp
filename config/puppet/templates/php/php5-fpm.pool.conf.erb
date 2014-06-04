@@ -66,3 +66,7 @@ php_admin_value[session.save_path] = /home/<%= app_user %>/php/sessions
 php_admin_value[session.name] = sess_<%= app_name %>
 php_admin_value[session.hash_function] = sha512
 php_admin_value[session.hash_bits_per_character] = 5
+
+;;; Upload limits
+php_admin_value[upload_max_filesize] = 15M
+php_admin_value[post_max_size] = 45M
