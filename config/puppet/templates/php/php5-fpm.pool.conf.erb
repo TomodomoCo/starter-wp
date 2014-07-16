@@ -14,6 +14,9 @@ group = <%= app_group %>
 ; listen on sock
 listen = /var/run/php5-fpm-pools-<%= app_name %>.sock
 
+listen.owner = www-data
+listen.group = www-data
+
 chdir = /home/<%= app_user %>
 
 
