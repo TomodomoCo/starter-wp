@@ -1,6 +1,6 @@
-## wpframe from Van Patten Media
+## vpmframe-wp
 
-This is our highly-opinionated framework for developing and deploying new WordPress websites.
+**vpmframe-wp** is Van Patten Media Inc.'s opinionated framework for developing and deploying new WordPress websites.
 
 It uses **Puppet**, **Capistrano**, **Vagrant**, and a number of other technologies for front-end scaffolding.
 
@@ -9,7 +9,7 @@ We hope this provides a good starting point for others looking to set up a simil
 Thanks for your support!
 
 [Chris Van Patten](https://github.com/chrisvanpatten) and [Peter Upfold](https://github.com/PeterUpfold)<br>
-(The [Van Patten Media](http://www.vanpattenmedia.com/) Team)
+(The [Van Patten Media](https://www.vanpattenmedia.com/) Team)
 
 - - -
 
@@ -46,7 +46,7 @@ Be sure to install [image_optim's dependencies](https://github.com/toy/image_opt
 
 ### License
 
-**Copyright &copy; 2012, [Van Patten Media](http://www.vanpattenmedia.com/).**
+**Copyright (c) 2012-2014, [Van Patten Media](http://www.vanpattenmedia.com/).**
 
 All rights reserved.
 

@@ -4,7 +4,7 @@
 Vagrant.configure("2") do |config|
 
   ##
-  # Set up wpframe
+  # Set up vpmframe-wp
   ##
   require "vpmframe/erb-render"
   require "yaml"

@@ -1,6 +1,6 @@
 {
-	"name": "vanpattenmedia/wpframe",
-	"description": "Fast WordPress scaffolding",
+	"name": "vanpattenmedia/vpmframe-wp",
+	"description": "Fast, opinionated WordPress scaffolding",
 	"type": "project",
 	"license": "BSD-3-Clause",
 	"config": {
