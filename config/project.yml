@@ -12,6 +12,11 @@ group: group
 theme: themename
 domain: domain.com
 
+alerts:
+  hipchat:
+    room:
+    key:
+
 stage:
   dev:
     ip: 127.0.0.1
