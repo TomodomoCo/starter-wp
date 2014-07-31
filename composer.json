@@ -20,7 +20,7 @@
 	],
 	"require": {
 		"symfony/yaml": "~2.0",
-		"johnpbloch/wordpress": "~3.6"
+		"johnpbloch/wordpress": "~3.9"
 	},
 	"extra": {
 		"wordpress-install-dir": "public/wp",
