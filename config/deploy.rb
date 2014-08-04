@@ -5,6 +5,9 @@ project = YAML.load_file(fetch(:project_yml_path))
 # Require multistage for local->staging->production deployment...
 require 'capistrano/ext/multistage'
 
+# Require tmpdir for local asset compilation
+require 'tmpdir'
+
 set :scm,                     :git
 set :git_enable_submodules,   1
 set :stages,                  ["staging", "production"]
@@ -21,6 +24,11 @@ set :app_access_users, project['access_users']
 set :app_theme,        project['theme']
 set :repository,       project['repo']
 set :site_domain,      project['domain']
+set :tmpdir,           Dir.mktmpdir
+
+# Set alerting variables
+set :alerts_hipchat_room, project['alerts']['hipchat']['room']
+set :alerts_hipchat_key,  project['alerts']['hipchat']['key']
 
 # Load vpmframe requirements
 require 'vpmframe/erb-render'
@@ -64,9 +72,7 @@ before "deploy",
   "assets:compile_local_assets"
 
 before "deploy:create_symlink",
-  "assets:upload_asset_css",
-  "assets:upload_asset_js",
-  "assets:upload_asset_images"
+  "assets:upload_local_assets"
 
 # Install composer dependencies
 after "deploy:update_code",

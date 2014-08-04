@@ -5,6 +5,9 @@ project = YAML.load_file(fetch(:project_yml_path))
 # Require multistage for local->staging->production deployment...
 require 'capistrano/ext/multistage'
 
+# Require tmpdir for local asset compilation
+require 'tmpdir'
+
 set :scm,                     :git
 set :git_enable_submodules,   1
 set :stages,                  ["staging", "production"]
@@ -23,6 +26,7 @@ set :app_access_users, project['access_users']
 set :app_theme,        project['theme']
 set :repository,       project['repo']
 set :site_domain,      project['domain']
+set :tmpdir,           Dir.mktmpdir
 
 # Set alerting variables
 set :alerts_hipchat_room, project['alerts']['hipchat']['room']
@@ -55,12 +59,8 @@ namespace :wordpress do
   end
 end
 
-# Setup related tasks
-#before "deploy:setup",
-#  "puppet:show"
-
+# Generate salts
 after "deploy:setup",
- # "permissions:fix_setup_ownership",
   "salts:generate_wp_salts"
 
 # Upload and symlink DB credentials
