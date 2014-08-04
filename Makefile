@@ -1,5 +1,5 @@
 RAW = ./app/assets
-COMPILED = ./public/content/themes/themename
+COMPILED = ./public/assets
 
 assets: images javascripts css
 

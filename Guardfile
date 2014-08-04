@@ -1,6 +1,3 @@
-require "yaml"
-project = YAML.load_file("./config/project.yml")
-
 group :development do
 
   guard 'livereload' do
@@ -11,9 +8,9 @@ group :development do
 
     # images
     watch(%r{app/assets/images/(.+\/)?(.+\.[gif|jpg|png]+)}) do |m|
-      `mkdir -p ./public/content/themes/#{project["theme"]}/img/#{m[1]}`
-      `cp #{m[0]} ./public/content/themes/#{project["theme"]}/img/#{m[1]}#{m[2]}`
-      `image_optim --no-pngout ./public/content/themes/#{project["theme"]}/img/#{m[1]}#{m[2]}`
+      `mkdir -p ./public/assets/img/#{m[1]}`
+      `cp #{m[0]} ./public/assets/img/#{m[1]}#{m[2]}`
+      `image_optim --no-pngout ./public/assets/img/#{m[1]}#{m[2]}`
     end
 
     # css
