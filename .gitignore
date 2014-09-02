@@ -1,9 +1,8 @@
-# WordPress
-
 # Ignore things with passwords
 database.yml
 s3.yml
 wp-salts.php
+config/services/
 
 # Misc.
 .sass-cache
@@ -18,10 +17,7 @@ site.pp
 vagrant-custom.rb
 
 # Site
+public/assets/
 public/content/uploads/
 public/wp/
 vendor/composer/
-
-public/content/themes/themename/css/
-public/content/themes/themename/js/
-public/content/themes/themename/img/
