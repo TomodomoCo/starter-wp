@@ -23,17 +23,19 @@ stage:
     http_port: 8080
     ssh_port: 2222
     user: vagrant
-    upload_url_path: 
-    upload_path: 
+    upload_url_path:
+    upload_path:
   staging:
     ip: 0.0.0.0
     ssh_port: 0
     user: deploy
-    upload_url_path: 
-    upload_path: 
+    branch: master
+    upload_url_path:
+    upload_path:
   production:
     ip: 0.0.0.0
     ssh_port: 0
     user: deploy
-    upload_url_path: 
-    upload_path: 
+    branch: master
+    upload_url_path:
+    upload_path:

@@ -18,6 +18,7 @@ ssh_options[:port] = fetch(:app_port)
 set :app_domain,    project['domain']
 set :deploy_to,     "/home/#{fetch(:app_user)}/#{fetch(:app_domain)}"
 set :app_deploy_to, fetch(:deploy_to)
+set :branch,        project['stage'][fetch(:app_stage)]['branch']
 
 # Database info
 set :db_name,     database[fetch(:app_stage)]['name']
