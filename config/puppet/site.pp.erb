@@ -72,13 +72,14 @@ define mysqldb( $user, $password, $host, $grant_to ) {
 	exec { "create-${name}-db":
 		unless => $app_stage ? {
 			'dev'   => "/usr/bin/mysql -u${user} -pvagrant ${name}",
-			default => "/usr/bin/mysql -h ${db_host} ${name}",
+			default => "/usr/bin/mysql --defaults-file=.my.cnf -h ${db_host} ${name}",
 		},
 		command => $app_stage ? {
 			'dev'   => "/usr/bin/mysql -uroot -pvagrant -e \"CREATE DATABASE IF NOT EXISTS ${name}; GRANT ALL ON ${name}.* TO ${user}@localhost IDENTIFIED BY '$password';\"",
-			default => "/usr/bin/mysql -h ${host} -e \"CREATE DATABASE IF NOT EXISTS ${name}; GRANT ALL ON ${name}.* TO ${user}@${grant_to} IDENTIFIED BY '$password';\"",
+			default => "/usr/bin/mysql --defaults-file=.my.cnf -h ${host} -e \"CREATE DATABASE IF NOT EXISTS ${name}; GRANT ALL ON ${name}.* TO ${user}@${grant_to} IDENTIFIED BY '$password';\"",
 			require => Service["mysqld"],
 		},
+		cwd   => "/home/deploy",
 	}
 }
 
