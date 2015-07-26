@@ -378,13 +378,6 @@ file { "/etc/default/varnish":
 }
 <% end %>
 
-file { "/etc/varnish/default.vcl":
-	owner => root,
-	group => root,
-	source => "<%= config_path %>/varnish/default.vcl",
-	require => Package["varnish"]
-}
-
 # prerequisite directories and files for Varnish modular configuration
 file { "/etc/varnish/sites":
 	ensure => directory,
