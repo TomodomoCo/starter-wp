@@ -11,7 +11,7 @@ if (req.http.host ~ "<%= site_domain %>$") {
 
 	# Drop any cookies sent to WordPress, except wordpress_ cookies
 	if (!(req.url ~ "wp-(login|admin|comments-post)") && !(req.http.Cookie ~ "wordpress_")) {
-		remove req.http.Cookie;
+		unset req.http.Cookie;
 	} 
 
 }
