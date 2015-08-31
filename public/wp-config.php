@@ -159,5 +159,5 @@ require_once( ABSPATH . 'wp-settings.php' );
 /**
  * Set 'blog_public'
  */
-if ( defined( 'WP_ROBOTS_PUBLIC' ) )
+if ( defined( 'WP_ROBOTS_PUBLIC' ) && is_blog_installed() )
 	update_option( 'blog_public', WP_ROBOTS_PUBLIC );
