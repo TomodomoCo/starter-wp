@@ -3,9 +3,9 @@
 # Varnish vcl_recv for this site that loads from modules/
 
 # Do not fail to include the if line below, or your rules will become Varnish-global
-if (req.http.host ~ "<%= site_domain %>$") {
+if (req.http.host ~ "<%= @site_domain %>$") {
 
-	<% if app_stage == 'dev' %>
+	<% if @app_stage == 'dev' %>
 	return(pass);
 	<% end %>
 

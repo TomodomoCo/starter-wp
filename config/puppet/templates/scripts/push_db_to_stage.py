@@ -16,9 +16,6 @@
 # specified in database.yml.
 #
 #
-# PLEASE READ THIS:
-# This is not perfect. It should not be let loose on untrusted config input yet. Be careful with your YAML, sir.
-# You are at your own risk. It works for me on dev -> staging.
 
 import yaml
 import os
@@ -30,6 +27,8 @@ import _mysql
 from pprint import pprint
 import argparse
 from pipes import quote
+from datetime import datetime
+import re
 
 ips = {}
 ssh_ports = {}
@@ -49,6 +48,8 @@ parser.add_argument('--ignore-upload-paths', action='store_true', help='Do not c
 parser.add_argument('--update-site-paths', action='store_true', help='Update the siteurl and home paths in the database, after it is synced. (Default %(default)s)')
 parser.add_argument('-f', '--from', help='The stage from which to download the database.')
 parser.add_argument('-t', '--to', help='The stage whose database should be replaced.', action='append')
+parser.add_argument('--days', default=0, help='Transfer only the last n days of posts and related content. (Default: %(default)s, where 0 transfers all posts.)')
+parser.add_argument('--source-prefix-override', default=None, help='Force the source database table prefix to the specified prefix. Useful with WP Multisite')
 arguments = parser.parse_args()
 
 
@@ -66,8 +67,21 @@ if not source_stage or not dest_stage or len(source_stage) < 1 or len(dest_stage
 	parser.print_help()
 	exit(2)
 
+try:
+        days = int(arguments.days)
+except ValueError as e:
+        parser.print_help()
+        exit(2)
+
+if days < 0:
+        print "--days must be greater than or equal to 0."
+        print
+        parser.print_help()
+        exit(2)
+
+
 pid = os.getpid()
-pid_str = str(pid)
+pid_str = str(pid) + '_' + datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
 # bring in WordPress and stage settings from project.yml
 try:
@@ -189,6 +203,13 @@ for stage in all_stages:
 		exit(1)
 	tbl_prefixes[stage] = db_config[stage]['tbl_prefix']
 
+
+if arguments.source_prefix_override is not None:
+    tbl_prefixes[source_stage] = arguments.source_prefix_override
+    print "INFO: Source table prefix is overriden to '" + arguments.source_prefix_override + "'. Ensure this includes a trailing underscore if appropriate!"
+    print
+
+
 source_db_prefix = source_stage[0] + "_"
 dest_db_prefix = dest_stage[0] + "_"
 
@@ -209,11 +230,148 @@ source_host = _mysql.escape_string(db_config[source_stage]['host'])
 
 # mysqldump the source
 
-print "Running a mysqldump on the source (" + source_stage + ") database..."
+# simple method for days=0
+if days == 0:
+    print "Running a simple mysqldump on the source (" + source_stage + ") database..."
 
-sdump = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' > ~/push_db_to_stage_' + pid_str + '_src_tmp.sql'], universal_newlines=True)
+    sdump = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' > ~/push_db_to_stage_' + pid_str + '_src_tmp.sql'], universal_newlines=True)
 
-sdump.communicate()
+    sdump.communicate()
+
+else:
+    # complex method for selective dumping
+
+    print "Running a complex dump for " + str(days) + "..."
+    print
+
+
+    print "Determining if this is a WPMU install..."
+
+    # before anything else, determine if this is WPMU and we should loop over prefixes
+    listtablescmd = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysql -Bh ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' -se "SHOW TABLES" ' + source_db + ' > ~/push_db_to_stage_' + pid_str + '_' + source_db + '_list.txt'], universal_newlines=True)
+    listtablescmd.communicate()
+
+    # pull down that list
+    listtablesdump = Popen(['scp', '-C', '-P', ssh_ports[source_stage], users[source_stage] + '@' + ips[source_stage] + ':~/push_db_to_stage_' + pid_str + '_' + source_db + '_list.txt', '.'], universal_newlines=True)
+    listtablesdump.communicate()
+    print
+
+    # determine if any prefix_n tables exist (e.g. wp_2_*, wp_3_*)
+    dumpable_prefixes = [ tbl_prefixes[source_stage] ]
+    lt = open('./push_db_to_stage_' + pid_str + '_' + source_db + '_list.txt', 'r')
+    for line in lt:
+      dumpable_prefix = line[: (len(tbl_prefixes[source_stage])+2)]
+      #print "this dumpable prefix is " + dumpable_prefix + " from " + line
+      if re.match(tbl_prefixes[source_stage] + r"([0-9]+)_", line) and dumpable_prefix not in dumpable_prefixes:
+        print "INFO: Will dump the prefix " + dumpable_prefix
+        dumpable_prefixes.append( dumpable_prefix ) 
+
+    lt.close()
+    
+    # remove local temporary file...
+    os.remove('./push_db_to_stage_' + pid_str + '_' + source_db + '_list.txt')
+    
+    # remove from source...
+    print "Removing the temporary file from the " + source_stage + " server..."
+    removesource = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'rm -fv -- ~/push_db_to_stage_' + pid_str + '_' + source_db + '_list.txt'], universal_newlines=True)
+    removesource.communicate()
+
+    print
+
+    # determine number of posts that will be pulled from each prefix
+    for this_prefix in dumpable_prefixes:
+      print
+      print "INFO: This dump of " + str(days) + " days of " + this_prefix + "* will have the following number of posts (includes revisions, drafts):"
+
+      postnumcmd = Popen(['ssh', '-qp', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysql -t -Bh ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' -e "SELECT COUNT(ID) AS posts_subset_count FROM ' + this_prefix + 'posts WHERE post_modified_gmt > (NOW() - INTERVAL ' + str(days) + ' DAY);" '], universal_newlines=True)
+      postnumcmd.communicate()
+
+    # get confirmation from the user
+    confirm = raw_input("Are you sure you want to replace the data on '" + ", ".join(dest_stage) + "' with this subset of posts? (y/n): ")
+    if not confirm == 'y' and not confirm == 'Y':
+	print "Exiting as requesting."
+	exit(1)
+
+    for this_prefix in dumpable_prefixes:
+      # selectively dump the wp_posts table
+      print "Dumping " + this_prefix + "posts..."
+      wpposts = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump --single-transaction -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' ' + this_prefix + 'posts --where="post_modified_gmt > ( NOW() - INTERVAL ' + str(days) + ' DAY)" > ~/push_db_to_stage_' + pid_str + '_' + this_prefix + '_posts_src_tmp.sql'], universal_newlines=True)
+      wpposts.communicate()
+
+      # selectively dump wp_postmeta
+      print "Dumping " + this_prefix + "postmeta..."
+      wppostmeta = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump --single-transaction -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' ' + this_prefix + 'postmeta --where="post_id IN (SELECT ID FROM ' + this_prefix + 'posts WHERE post_modified_gmt > ( NOW() - INTERVAL ' + str(days) + ' DAY))" > ~/push_db_to_stage_' + pid_str + '_' + this_prefix + '_postmeta_src_tmp.sql'], universal_newlines=True)
+      wppostmeta.communicate()
+
+      # selectively dump wp_comments
+      print "Dumping " + this_prefix + "comments..."
+      wpcomments = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump --single-transaction -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' ' + this_prefix + 'comments --where="comment_post_id IN (SELECT ID FROM ' + this_prefix + 'posts WHERE post_modified_gmt > ( NOW() - INTERVAL ' + str(days) + ' DAY))" > ~/push_db_to_stage_' + pid_str + '_' + this_prefix + '_comments_src_tmp.sql'], universal_newlines=True)
+      wpcomments.communicate()
+
+      # selectively dump wp_commentmeta
+      print "Dumping " + this_prefix + "commentmeta..."
+      wpcommentmeta = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump --single-transaction -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' ' + this_prefix + 'commentmeta --where="comment_id IN (SELECT comment_post_ID FROM ' + this_prefix + 'comments AS wpc INNER JOIN ' + this_prefix + 'posts AS wpp ON wpp.ID = wpc.comment_post_ID WHERE wpp.post_modified_gmt > ( NOW() - INTERVAL ' + str(days) + ' DAY))" > ~/push_db_to_stage_' + pid_str + '_' + this_prefix + '_commentmeta_src_tmp.sql'], universal_newlines=True)
+      wpcommentmeta.communicate()
+
+      # selectively dump wp_term_relationships
+      print "Dumping " + this_prefix + "term_relationships..."
+      wpterm_relationships = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump --single-transaction -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' ' + this_prefix + 'term_relationships --where="object_id IN (SELECT ID FROM ' + this_prefix + 'posts AS wpp WHERE wpp.post_modified_gmt > ( NOW() - INTERVAL ' + str(days) + ' DAY))" > ~/push_db_to_stage_' + pid_str + '_' + this_prefix + '_term_relationships_src_tmp.sql'], universal_newlines=True)
+      wpterm_relationships.communicate()
+
+
+      print
+      print "INFO: It is safe to ignore warnings about " + this_prefix + "cfs_values being missing if CFS is not installed in this site."
+
+      print "Dumping " + this_prefix + "cfs_values..."
+      # selectively dump wp_cfs_values
+      wpcfs_values = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump --single-transaction -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' ' + this_prefix + 'cfs_values --where="post_id IN (SELECT ID FROM ' + this_prefix + 'posts AS wpp WHERE wpp.post_modified_gmt > ( NOW() - INTERVAL ' + str(days) + ' DAY))" > ~/push_db_to_stage_' + pid_str + '_' + this_prefix + '_cfs_values_src_tmp.sql'], universal_newlines=True)
+      wpcfs_values.communicate()
+
+      # dump other tables
+
+      # tables dump subquery for listing tables to dump -- we exclude the separate ones we have done
+      ignore_tables = [ 'posts', 'postmeta', 'comments', 'commentmeta', 'term_relationships', 'cfs_values' ]
+      ignore_tables_formatted = ''
+
+      for table in ignore_tables:
+	      ignore_tables_formatted += '\'' + this_prefix + table + '\','
+
+      ignore_tables_formatted = ignore_tables_formatted[:-1] # cut off last comma
+
+      # our tables dump subquery must exclude any tables that match another prefix (wp_* matches the wp_n_* 'other' tables, which is not desired)
+      if tbl_prefixes[source_stage] == this_prefix:
+        other_prefixes = list(dumpable_prefixes)
+	# remove this prefix from other_prefixes list
+	if this_prefix in other_prefixes:
+	  other_prefixes.remove(this_prefix)
+
+	other_prefixes_formatted = ' AND TABLE_NAME NOT LIKE '
+
+	for other_prefix in other_prefixes:
+	  other_prefixes_formatted += '\'' + other_prefix + '%\' AND TABLE_NAME NOT LIKE '
+
+	other_prefixes_formatted = other_prefixes_formatted[:-25] # cut off last 'AND' to finish statement
+      else:
+        other_prefixes_formatted = ''
+
+      # this subquery selects which tables specifically for mysqldump to dump below
+      tables_subquery = 'mysql -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' -Bse "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=\'' + source_db + '\' AND TABLE_NAME LIKE \'' + this_prefix + '%\' AND TABLE_NAME NOT IN (' + ignore_tables_formatted + ')' + other_prefixes_formatted + '"'
+      #print tables_subquery
+      
+      # actually do the 'other' tables dump
+      print "Dumping " + this_prefix + "'s other tables..."
+      sdump = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' --tables $(' + tables_subquery + ') > ~/push_db_to_stage_' + pid_str + '_' + this_prefix + '_other_tmp.sql'], universal_newlines=True)
+      sdump.communicate() 
+
+      print "Completed processing " + this_prefix
+      print "--------------------------"
+      print
+
+
+    print "Merging dumps..."
+    # merge dumps
+    mergedumps = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'cat ~/push_db_to_stage_' + pid_str + '*.sql > ~/push_db_to_stage_' + pid_str + '_src_tmp.sql'], universal_newlines=True)
+    mergedumps.communicate() 
 
 print "Done."
 print
@@ -229,7 +387,7 @@ print
 
 # remove from source
 print "Removing the temporary file from the " + source_stage + " server..."
-sdump = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'rm -fv -- ~/push_db_to_stage_' + pid_str + '_src_tmp.sql'], universal_newlines=True)
+sdump = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'rm -fv -- ~/push_db_to_stage_' + pid_str + '*.sql'], universal_newlines=True)
 
 sdump.communicate()
 

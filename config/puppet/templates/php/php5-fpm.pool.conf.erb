@@ -1,4 +1,4 @@
-[<%= app_name %>]
+[<%= @app_name %>]
 
 ;;; Rendered: <%= Time.now.utc %>
 
@@ -8,16 +8,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; application credentials
-user = <%= app_user %>
-group = <%= app_group %>
+user = <%= @app_user %>
+group = <%= @app_group %>
 
 ; listen on sock
-listen = /var/run/php5-fpm-pools-<%= app_name %>.sock
-
+listen = /var/run/php5-fpm-pools-<%= @app_name %>.sock
 listen.owner = www-data
 listen.group = www-data
 
-chdir = /home/<%= app_user %>
+chdir = /home/<%= @app_user %>
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,9 +35,9 @@ pm.max_requests = 50
 ;;; Logging ;;;
 ;;;;;;;;;;;;;;;
 
-access.log = /home/<%= app_user %>/php/log/<%= app_name %>.access.log
+access.log = /home/<%= @app_user %>/php/log/<%= @app_name %>.access.log
 access.format = %R - %u %t "%m %r%Q%q" %s %f %{mili}d %{kilo}M %C%%
-slowlog = /home/<%= app_user %>/php/log/<%= app_name %>.slow.log
+slowlog = /home/<%= @app_user %>/php/log/<%= @app_name %>.slow.log
 
 request_slowlog_timeout = 2s
 
@@ -57,16 +56,16 @@ security.limit_extensions = .php
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 php_admin_value[sendmail_path] = /usr/sbin/sendmail -t -i -f logs@vanpattenmedia.com
-<% if app_stage != "dev" %>
+<% if @app_stage != "dev" %>
 php_flag[display_errors] = off
 <% else %>
 php_flag[display_errors] = on
 <% end %>
 php_admin_flag[log_errors] = on
-php_admin_value[error_log] = /home/<%= app_user %>/php/log/error.log
+php_admin_value[error_log] = /home/<%= @app_user %>/php/log/error.log
 php_admin_value[memory_limit] = 128M
-php_admin_value[session.save_path] = /home/<%= app_user %>/php/sessions
-php_admin_value[session.name] = sess_<%= app_name %>
+php_admin_value[session.save_path] = /home/<%= @app_user %>/php/sessions
+php_admin_value[session.name] = sess_<%= @app_name %>
 php_admin_value[session.hash_function] = sha512
 php_admin_value[session.hash_bits_per_character] = 5
 
