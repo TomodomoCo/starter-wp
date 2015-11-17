@@ -10,16 +10,4 @@ group :development do
   gem "compass"
   gem "compass-rgbapng"
   gem "oily_png"
-
-  # Image optimization
-  gem "image_optim"
-
-  # JavaScript
-  gem "jammit"
-  gem "uglifier"
-
-  # Guard
-  gem "guard"
-  gem "guard-livereload", "~> 1.0.3"
-  gem "guard-shell"
 end
