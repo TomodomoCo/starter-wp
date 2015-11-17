@@ -1,18 +1,12 @@
-RAW = ./app/assets
 COMPILED = ./public/assets
 
-assets: images javascripts css
+assets:
+	npm install
+	bower install
+	gulp
 
-css:
-	compass compile
-
-javascripts:
-	jammit
-
-images:
-	mkdir -p $(COMPILED)/img/
-	cp -R $(RAW)/images/. $(COMPILED)/img/
-	image_optim --recursive --no-pngout $(COMPILED)/img/
+ports:
+	sudo pfctl -evf config/pf.conf
 
 clean: clean-css clean-javascripts clean-images
 
@@ -25,4 +19,4 @@ clean-javascripts:
 clean-images:
 	rm -rf $(COMPILED)/img/
 
-.PHONY: assets css javascripts images clean clean-css clean-javascripts clean-images
+.PHONY: assets clean clean-css clean-javascripts clean-images
