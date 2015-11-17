@@ -3,7 +3,7 @@
 #
 # Push the current database to stage
 #
-# This script pushes the content in the site database for the current 
+# This script pushes the content in the site database for the current
 # stage to another stage, for example, development -> staging.
 #
 # It automatically handles the rewriting of key WordPress options siteurl,
@@ -117,15 +117,15 @@ all_stages = [source_stage] + dest_stage
 
 for stage in all_stages:
 	# sanity check the stage in the YAML
-	if not 'ip' in proj_config['stage'][stage] or not 'ssh_port' in proj_config['stage'][stage] or not 'user' in proj_config['stage'][stage]:
-		print "The '" + stage + "' stage in the 'stage' section of the project configuration file does not have one or more of the required 'ip', 'ssh_port' or 'user'  entries."
+	if not 'ip' in proj_config['stage'][stage] or not 'ssh' in proj_config['stage'][stage]['ports'] or not 'user' in proj_config['stage'][stage]:
+		print "The '" + stage + "' stage in the 'stage' section of the project configuration file does not have one or more of the required 'ip', 'ssh port' or 'user' entries."
 		exit(1)
 
 	# load the YAML vars into our internal vars
 	ips[stage] = proj_config['stage'][stage]['ip']
-	ssh_ports[stage] = str(proj_config['stage'][stage]['ssh_port'])
+	ssh_ports[stage] = str(proj_config['stage'][stage]['ports']['ssh'])
 	users[stage] = proj_config['stage'][stage]['user']
-	
+
 	# prepare some possible prefixes for the paths in case we want them
 	if stage == 'production':
 		url_prefix = 'www'
@@ -169,7 +169,7 @@ for stage in all_stages:
 	if update_site_paths:
 		homes[stage] = 'http://' + url_prefix + '.' + proj_config['domain'] + '/'
 		siteurls[stage] = 'http://' + url_prefix + '.' + proj_config['domain'] + '/wp'
-		
+
 
 # bring in database credentials from YAML
 try:
@@ -194,7 +194,7 @@ if not source_stage in db_config:
         exit(1)
 for this_dest in dest_stage:
 	if not this_dest in db_config:
-		print "The '" + this_dest + "' stage was not found in the database config YAML file."        
+		print "The '" + this_dest + "' stage was not found in the database config YAML file."
 		exit(1)
 for stage in all_stages:
 	if not 'name' in db_config[stage] or not 'user' in db_config[stage] or not 'password' in db_config[stage] or not 'host' in db_config[stage] or not 'grant_to' in db_config[stage] or not 'tbl_prefix' in db_config[stage] or not 'host' in db_config[stage]:
@@ -264,13 +264,13 @@ else:
       #print "this dumpable prefix is " + dumpable_prefix + " from " + line
       if re.match(tbl_prefixes[source_stage] + r"([0-9]+)_", line) and dumpable_prefix not in dumpable_prefixes:
         print "INFO: Will dump the prefix " + dumpable_prefix
-        dumpable_prefixes.append( dumpable_prefix ) 
+        dumpable_prefixes.append( dumpable_prefix )
 
     lt.close()
-    
+
     # remove local temporary file...
     os.remove('./push_db_to_stage_' + pid_str + '_' + source_db + '_list.txt')
-    
+
     # remove from source...
     print "Removing the temporary file from the " + source_stage + " server..."
     removesource = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'rm -fv -- ~/push_db_to_stage_' + pid_str + '_' + source_db + '_list.txt'], universal_newlines=True)
@@ -357,11 +357,11 @@ else:
       # this subquery selects which tables specifically for mysqldump to dump below
       tables_subquery = 'mysql -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' -Bse "SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=\'' + source_db + '\' AND TABLE_NAME LIKE \'' + this_prefix + '%\' AND TABLE_NAME NOT IN (' + ignore_tables_formatted + ')' + other_prefixes_formatted + '"'
       #print tables_subquery
-      
+
       # actually do the 'other' tables dump
       print "Dumping " + this_prefix + "'s other tables..."
       sdump = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'mysqldump -h ' + source_host + ' -u ' + source_user + ' -p' + source_pass + ' ' + source_db + ' --tables $(' + tables_subquery + ') > ~/push_db_to_stage_' + pid_str + '_' + this_prefix + '_other_tmp.sql'], universal_newlines=True)
-      sdump.communicate() 
+      sdump.communicate()
 
       print "Completed processing " + this_prefix
       print "--------------------------"
@@ -371,7 +371,7 @@ else:
     print "Merging dumps..."
     # merge dumps
     mergedumps = Popen(['ssh', '-p', ssh_ports[source_stage], '-l', users[source_stage], ips[source_stage], 'cat ~/push_db_to_stage_' + pid_str + '*.sql > ~/push_db_to_stage_' + pid_str + '_src_tmp.sql'], universal_newlines=True)
-    mergedumps.communicate() 
+    mergedumps.communicate()
 
 print "Done."
 print
@@ -432,7 +432,7 @@ for this_dest in dest_stage:
 	# remove from source
 	print "Removing the temporary file from the " + this_dest + " server..."
 	ddump = Popen(['ssh', '-p', ssh_ports[this_dest], '-l', users[this_dest], ips[this_dest], 'rm -fv -- ~/push_db_to_stage_' + pid_str + '_dest_tmp.sql'], universal_newlines=True)
- 	 
+
 	ddump.communicate()
 	print "Done."
 	print
@@ -451,12 +451,12 @@ for this_dest in dest_stage:
 		new_upload_url_path = _mysql.escape_string(upload_url_paths[this_dest])
 		old_upload_path = _mysql.escape_string(upload_paths[source_stage])
 		new_upload_path = _mysql.escape_string(upload_paths[this_dest])
-		
+
 		sql = sql + "UPDATE `" + new_tblprefix + "posts` SET post_content = REPLACE(post_content, '" + old_upload_url_path + "', '" + new_upload_url_path + "');\n\
 	UPDATE `" + new_tblprefix + "options` SET option_value = '" + new_upload_path + "' WHERE option_name = 'upload_path';\n\
 	UPDATE `" + new_tblprefix + "options` SET option_value = '" + new_upload_url_path + "' WHERE option_name = 'upload_url_path';\n"
 
-	if update_site_paths: 
+	if update_site_paths:
 		old_siteurl = _mysql.escape_string(siteurls[source_stage])
 		new_siteurl = _mysql.escape_string(siteurls[this_dest])
 		old_home = _mysql.escape_string(homes[source_stage])
@@ -493,7 +493,7 @@ for this_dest in dest_stage:
 		# remove from source
 		print "Removing the temporary file from the " + this_dest + " server..."
 		udump = Popen(['ssh', '-p', ssh_ports[this_dest], '-l', users[this_dest], ips[this_dest], 'rm -fv -- ~/push_db_to_stage_' + pid_str + '_update_tmp.sql'], universal_newlines=True)
- 	 
+
 		udump.communicate()
 		print "Done."
 		print

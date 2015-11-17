@@ -1,7 +1,7 @@
 dev:
-  name:
-  user:
-  password:
+  name: dev
+  user: dev
+  password: dev
   host: localhost
   grant_to: localhost
   tbl_prefix: wp_
