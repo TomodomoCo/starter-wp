@@ -1,0 +1,16 @@
+{
+  "name": "vanpattenmedia",
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-autoprefixer": "^1.0.0",
+    "gulp-compass": "*",
+    "gulp-concat": "*",
+    "gulp-imagemin": "*",
+    "gulp-livereload": "*",
+    "gulp-minify-css": "*",
+    "gulp-plumber": "*",
+    "gulp-uglify": "*",
+    "gulp-util": "*",
+    "main-bower-files": "*"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "vpmframe-wp",
+  "version": "0.0.1",
+  "private": "true",
+  "authors": [
+    "Chris Van Patten <chris@vanpattenmedia.com>"
+  ],
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  },
+  "resolutions": {
+    "jquery": ">=2.0"
+  }
+}
