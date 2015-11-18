@@ -92,7 +92,7 @@ define mysqldb( $user, $password, $host, $grant_to ) {
 
 define vcl_rules( $app_name, $procedure, $enabled = true ) {
 	exec { "create-${name}-vcl-rules":
-		unless => "/bin/grep 'include \"/etc/varnish/sites/${app_name}/${procedure}.vcl\";' /etc/varnish/sites-${procedure}.vcl", 
+		unless => "/bin/grep 'include \"/etc/varnish/sites/${app_name}/${procedure}.vcl\";' /etc/varnish/sites-${procedure}.vcl",
 		command => "/bin/echo 'include \"/etc/varnish/sites/${app_name}/${procedure}.vcl\";' | /usr/bin/tee -a /etc/varnish/sites-${procedure}.vcl",
 		provider => shell,
 	}
@@ -263,9 +263,9 @@ notify => Service["nginx"]
 }
 
 ##################################
-#                                #   
-#   uploads.<%= app_domain %>    #   
-#                                #   
+#                                #
+#   uploads.<%= app_domain %>    #
+#                                #
 ##################################
 
 # TODO modularise this out further
@@ -398,7 +398,7 @@ file { "/etc/varnish/sites-fetch.vcl":
 	group => root
 }
 
-file { "/etc/varnish/sites/<%= app_name %>": 
+file { "/etc/varnish/sites/<%= app_name %>":
 	ensure => directory,
 	owner => root,
 	group => root
@@ -437,7 +437,7 @@ service { "varnish":
 	ensure => running,
 	require => Package["varnish"],
 	<% if app_stage == "dev" %>
-	subscribe => [File["/etc/default/varnish"],File["/etc/varnish/default.vcl"]],
+	subscribe => [File["/etc/default/varnish"]],
 	<% end %>
 }
 
