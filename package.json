@@ -1,10 +1,11 @@
 {
   "name": "vpmframe-wp",
-  "devDependencies": {
+  "dependencies": {
     "gulp": "*",
     "gulp-autoprefixer": "^1.0.0",
     "gulp-compass": "*",
     "gulp-concat": "*",
+    "gulp-exec": "*",
     "gulp-imagemin": "*",
     "gulp-livereload": "*",
     "gulp-minify-css": "*",

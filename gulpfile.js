@@ -1,3 +1,6 @@
+/**
+ * Load Gulp and Gulp-adjacent dependencies
+ */
 var gulp           = require( 'gulp' ),
     gutil          = require( 'gulp-util' ),
     autoprefixer   = require( 'gulp-autoprefixer' ),
@@ -15,31 +18,31 @@ var gulp           = require( 'gulp' ),
 /**
  * Define paths
  */
-var dev = 'app/assets/',
-    pub = 'public/assets/'
+var src  = 'app/assets/',
+    dest = 'public/assets/'
     ;
 
 var paths = {
-  dev: {
-    fonts:       dev + 'fonts/**/*',
-    images:      dev + 'images/**/*',
-    javascripts: dev + 'javascripts',
-    sass:        dev + 'sass'
+  src: {
+    fonts:       src + 'fonts/**/*',
+    images:      src + 'images/**/*',
+    javascripts: src + 'javascripts',
+    sass:        src + 'sass'
   },
-  pub: {
-    css:         pub + 'css/',
-    fonts:       pub + 'fonts/',
-    images:      pub + 'img/',
-    javascripts: pub + 'js/'
+  dest: {
+    css:         dest + 'css/',
+    fonts:       dest + 'fonts/',
+    images:      dest + 'img/',
+    javascripts: dest + 'js/'
   }
 };
 
 /**
  * CSS tasks
  */
-gulp.task('css', function() {
+gulp.task( 'css', function() {
 
-  return gulp.src(paths.dev.sass + '/*.scss')
+  return gulp.src( paths.src.sass + '/*.scss' )
     .pipe( plumber({
       errorHandler: function (error) {
         console.log( error.message );
@@ -47,10 +50,10 @@ gulp.task('css', function() {
       }
     }) )
     .pipe( compass({
-      sass:  paths.dev.sass,
-      css:   paths.pub.css,
-      image: paths.pub.images,
-      font:  paths.pub.fonts,
+      sass:  paths.src.sass,
+      css:   paths.dest.css,
+      image: paths.dest.images,
+      font:  paths.dest.fonts,
       require: [
         'breakpoint',
         'sass-globbing',
@@ -66,107 +69,93 @@ gulp.task('css', function() {
       browser: ['last 2 versions'],
       cascade: false
     }) )
-    .pipe( gulp.dest( paths.pub.css ) )
     .pipe( minifyCss({
-      advanced: false
+      advanced: false,
+      keepSpecialComments: 0
     }) )
-    .pipe( gulp.dest( paths.pub.css ) )
+    .pipe( gulp.dest( paths.dest.css ) )
     .pipe( livereload() );
-
-});
-
-/**
- * JS tasks
- */
-gulp.task('js', function() {
-
-  /**
-   * libraries.js
-   */
-  gulp.src( mainBowerFiles({
-    paths: {
-      bowerDirectory: 'vendor/bower_components'
-    },
-    filter: /\.js$/i
-  }) )
-    .pipe( concat( 'libraries.js' ) )
-    .on( 'error', gutil.log )
-    .pipe( uglify() )
-    .on( 'error', gutil.log )
-    .pipe( gulp.dest( paths.pub.javascripts ) )
-    .pipe( livereload() );
-
-  /**
-   * script.js
-   */
-  gulp.src([
-    paths.dev.javascripts + '/formGeneric.js',
-    paths.dev.javascripts + '/formAsk.js',
-    paths.dev.javascripts + '/formPayment.js',
-    paths.dev.javascripts + '/formSignup.js',
-    paths.dev.javascripts + '/stripeHandler.js',
-    paths.dev.javascripts + '/svg.js',
-    paths.dev.javascripts + '/tabs.js'
-  ])
-    .pipe( concat( 'script.js' ) )
-    .on( 'error', gutil.log )
-    .pipe( uglify() )
-    .on( 'error', gutil.log )
-    .pipe( gulp.dest( paths.pub.javascripts ) )
-    .pipe( livereload() );
-
-  /**
-   * login.js
-   */
-  gulp.src([
-    paths.dev.javascripts + '/login.js',
-  ])
-    .pipe( concat( 'login.js' ) )
-    .on( 'error', gutil.log )
-    .pipe( uglify() )
-    .on( 'error', gutil.log )
-    .pipe( gulp.dest( paths.pub.javascripts ) )
-    .pipe( livereload() );
-
-});
-
-/**
- * Images
- */
-gulp.task('images', function () {
-
-  gulp.src( paths.dev.images )
-    .pipe( imagemin({
-      progressive: true,
-      multipass: true
-    }) )
-    .pipe( gulp.dest( paths.pub.images ) )
-    .pipe( livereload() );
-
-});
-
-/**
- * Clean out old files
- */
-gulp.task( 'clean', function() {
-
-  var execOptions = { pub: pub };
-
-  gulp.src('').pipe( exec( 'rm -rf <%= options.pub %>', execOptions ) );
 
 } );
 
 /**
- * Watch for changes
+ * JavaScript tasks
+ */
+gulp.task( 'javascripts', function() {
+
+  /**
+   * Default function for compiling JS
+   *
+   * @param source
+   * @param filename
+   */
+  function compileJavaScripts( source, filename ) {
+    return gulp.src( source )
+             .pipe( concat( filename ) )
+             .on( 'error', gutil.log )
+             .pipe( uglify() )
+             .on( 'error', gutil.log )
+             .pipe( gulp.dest( paths.dest.javascripts ) )
+             .pipe( livereload() )
+             ;
+  }
+
+  /**
+   * libraries.js
+   */
+  compileJavaScripts( mainBowerFiles({
+    paths: {
+      bowerDirectory: 'vendor/bower_components'
+    },
+    filter: /\.js$/i
+  }), 'libraries.js' );
+
+  /**
+   * script.js
+   */
+  compileJavaScripts( [
+    paths.src.javascripts + '/script.js',
+  ], 'script.js' );
+
+} );
+
+/**
+ * Images
+ */
+gulp.task( 'images', function () {
+
+  gulp.src( paths.src.images )
+    .pipe( imagemin({
+      progressive: true,
+      multipass: true
+    }) )
+    .pipe( gulp.dest( paths.dest.images ) )
+    .pipe( livereload() );
+
+} );
+
+/**
+ * Clean out compiled static assets
+ */
+gulp.task( 'clean', function() {
+
+  gulp.src('').pipe( exec( 'rm -rf <%= options.dest %>', { dest: dest } ) );
+
+} );
+
+/**
+ * Watch for changes and automatically reload the browser
  */
 gulp.task( 'watcher', function() {
+
   // Activate LiveReload's listener
   livereload.listen();
 
-  // Watch dev paths and execute callback tasks as necessary
-  gulp.watch( paths.dev.sass + '/**/*', ['css'] );
-  gulp.watch( paths.dev.javascripts + '/**/*', ['js'] );
-  gulp.watch( paths.dev.images, ['images'] );
+  // Watch src paths and execute callback tasks as necessary
+  gulp.watch( paths.src.sass + '/**/*',        ['css'] );
+  gulp.watch( paths.src.javascripts + '/**/*', ['js'] );
+  gulp.watch( paths.src.images,                ['images'] );
+
 } );
 
 /**
@@ -174,7 +163,7 @@ gulp.task( 'watcher', function() {
  */
 gulp.task( 'default', [
   'images',
-  'js',
+  'javascripts',
   'css'
 ] );
 

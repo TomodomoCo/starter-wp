@@ -4,6 +4,12 @@ s3.yml
 wp-salts.php
 config/services/
 
+# Compiled files and dependencies
+public/assets/
+public/content/uploads/
+public/wp/
+vendor/
+
 # Hidden files, cashes, assets, and misc.
 .sass-cache
 .DS_Store
@@ -15,9 +21,4 @@ vagrant_nginx_postprocess
 site.pp
 vagrant-custom.rb
 .bundle
-
-# Compiled files and dependencies
-public/assets/
-public/content/uploads/
-public/wp/
-vendor/
+npm-debug.log
