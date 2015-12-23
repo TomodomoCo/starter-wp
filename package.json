@@ -1,5 +1,5 @@
 {
-  "name": "vanpattenmedia",
+  "name": "vpmframe-wp",
   "devDependencies": {
     "gulp": "*",
     "gulp-autoprefixer": "^1.0.0",
@@ -12,5 +12,9 @@
     "gulp-uglify": "*",
     "gulp-util": "*",
     "main-bower-files": "*"
+  },
+  "scripts": {
+    "bower": "bower",
+    "gulp": "gulper"
   }
 }

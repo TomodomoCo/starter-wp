@@ -14,6 +14,7 @@ node_modules
 vagrant_nginx_postprocess
 site.pp
 vagrant-custom.rb
+.bundle
 
 # Compiled files and dependencies
 public/assets/

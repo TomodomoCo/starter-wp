@@ -6,7 +6,6 @@ Vagrant.configure("2") do |config|
   ##
   # Set up vpmframe-wp
   ##
-  require "vpmframe/erb-render"
   require "yaml"
   require "erb"
 
@@ -33,9 +32,9 @@ Vagrant.configure("2") do |config|
   # Set up Vagrant
   ##
   config.vm.box = "vpm_vagrant_jessie_2015-08"
-  config.vm.network :forwarded_port, guest: 80, host: project['stage'][app_stage]['ports']['http']
+  config.vm.network :forwarded_port, guest: 80,  host: project['stage'][app_stage]['ports']['http']
   config.vm.network :forwarded_port, guest: 443, host: project['stage'][app_stage]['ports']['https']
-  config.vm.network :forwarded_port, guest: 22, host: project['stage'][app_stage]['ports']['ssh']
+  config.vm.network :forwarded_port, guest: 22,  host: project['stage'][app_stage]['ports']['ssh']
 
   ##
   # Share the path to config files with the VM
