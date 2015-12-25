@@ -11,6 +11,6 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
-[{Guardfile,Vagrantfile,Capfile,Gemfile}]
+[{Guardfile,Vagrantfile,Capfile,Gemfile,.bowerrc}]
 indent_style = space
 indent_size = 2
