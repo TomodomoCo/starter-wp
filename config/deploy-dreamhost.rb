@@ -23,7 +23,6 @@ set :user,             project['deploy_user']
 set :app_user,         project['user']
 set :app_group,        project['group']
 set :app_access_users, project['access_users']
-set :app_theme,        project['theme']
 set :repository,       project['repo']
 set :site_domain,      project['domain']
 set :tmpdir,           Dir.mktmpdir

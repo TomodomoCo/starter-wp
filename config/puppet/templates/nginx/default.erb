@@ -41,17 +41,6 @@ server {
 	# More: <http://www.vanpattenmedia.com/2012/a-tale-of-stale-content/>
 	sendfile off;
 
-	# TimThumb internal security lockdown
-	location ~* ^(?:/content/themes/<%= @app_theme %>)?/img/timthumb/timthumb(?:-config)?.php {
-		# prevent direct querying of timthumb.php
-		internal;
-		try_files $uri =404;
-		location ~ \..*/.*\.php$ {
-			return 404;
-		}
-		fastcgi_pass unix:/var/run/php5-fpm-pools-<%= @app_name %>.sock;
-	}
-
 
 	##################################
 	#                                #
@@ -60,20 +49,7 @@ server {
 	##################################
 
 	location / {
-		try_files $uri $uri/ @rewrites;
-	}
-
-	location @rewrites {
-		rewrite ^/plugins/(.*)$ /content/plugins/$1 last;
-
-		# redirect wp-content to content
-		rewrite ^/wp-content/(.*)$ /content/$1 permanent;
-
-		# redirect /content/uploads to static.
-		rewrite  ^/content/uploads/(.*)$ http://static.<%= @site_domain %>/content/uploads/$1 permanent;
-
-		# If nothing matches, send it to index.php
-		rewrite ^ /index.php last;
+		try_files $uri $uri/ index.php last;
 	}
 
 
@@ -144,21 +120,12 @@ server {
 		return 403;
 	}
 
-	# Disable any public access to TimThumb cache
-	location ~*  ^(?:/content/themes/<%= @app_theme %>)?/img/timthumb/cache/.*$ {
-		return 403;
-	}
-
-
 
 	##################################
 	#                                #
 	#      PHP-related settings      #
 	#                                #
 	##################################
-
-	# these are now server-global, so our 'internal'-only PHP scripts (TimThumb) can inherit the settings
-	# in their location blocks
 
 	fastcgi_param  QUERY_STRING       $query_string;
 	fastcgi_param  REQUEST_METHOD     $request_method;
@@ -167,7 +134,6 @@ server {
 
 	fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
 	fastcgi_param  SCRIPT_FILENAME    $realpath_root$fastcgi_script_name;
-	# for Chroot # fastcgi_param  SCRIPT_FILENAME    /vanpattenmedia.com/$fastcgi_script_name;
 	fastcgi_param  REQUEST_URI        $request_uri;
 	fastcgi_param  DOCUMENT_URI       $document_uri;
 	fastcgi_param  DOCUMENT_ROOT      $realpath_root;
