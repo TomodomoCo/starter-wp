@@ -15,18 +15,13 @@ Thanks for your support!
 
 ### Instructions
 
-Detailed instructions coming soon. In the meantime, you'll want to remember `bundle install`, `vagrant up`, `vagrant reload`, `bundle exec guard`, and `bundle exec cap`.
+1. Install Vagrant, Ruby (we recommend via RVM), and Node w/ npm
+2. Add the Vagrant box
+3. Tweak config files in `config/` (`project.yml`, `database.yml`)
+4. `make install`
+5. `vagrant up`
 
-Customise (and, where appropriate, remove the `.example` from) these files:
-+ assets.yml
-+ database.yml
-+ project.yml
-+ s3.yml
-+ Makefile
-
-Add your theme in `public/content/themes/`.
-
-Be sure to install [image_optim's dependencies](https://github.com/toy/image_optim).
+Add your theme in `public/content/themes/` (or `app/views/`, symlinked to the themes folder)
 
 - - -
 
