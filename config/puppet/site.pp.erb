@@ -160,12 +160,15 @@ user { "<%= access_user %>":
 	ensure => present,
 
 	<% if access_user == app_user %>
-	groups => ["www-php-loggers", "<%= app_user %>-homerw", "<%= app_group %>"],
-	gid => "<%= app_group %>",
-	password => "*", # prevent password login entirely
+		groups   => ["www-php-loggers", "<%= app_user %>-homerw", "<%= app_group %>"],
+		gid      => "<%= app_group %>",
+		password => "*", # prevent password login entirely
 
+		<% if app_stage == "dev" %>
+			uid => 9999, # Set a manual UID to match the Vagrant synced folder
+		<% end %>
 	<% else %>
-	groups => ["<%= app_user %>-homerw","<%= app_group %>"],
+		groups => ["<%= app_user %>-homerw","<%= app_group %>"],
 	<% end %>
 
 	membership => minimum,

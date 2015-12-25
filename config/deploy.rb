@@ -27,11 +27,10 @@ set :site_domain,      project['domain']
 set :tmpdir,           Dir.mktmpdir
 
 # Set alerting variables
-set :alerts_hipchat_room, project['alerts']['hipchat']['room']
-set :alerts_hipchat_key,  project['alerts']['hipchat']['key']
+set :alerts_slack_room, project['alerts']['slack']['room']
+set :alerts_slack_hook, project['alerts']['slack']['hook']
 
 # Load vpmframe requirements
-require 'vpmframe/erb-render'
 require 'vpmframe/capistrano/assets'
 require 'vpmframe/capistrano/composer'
 require 'vpmframe/capistrano/puppet'
@@ -88,4 +87,5 @@ before "deploy:restart",
 # Cleanup
 after "deploy",
   "deploy:cleanup",
-  "assets:local_temp_cleanup"
+  "assets:local_temp_cleanup",
+  "alerts:slack"
