@@ -20,6 +20,9 @@ alerts:
     room:
     hook:
 
+# Should we create a folder/virtualhost at uploads.{site_domain}?
+uploads_dir: true
+
 # Deployment stages
 stage:
   dev:
@@ -29,21 +32,20 @@ stage:
       https: 16001
       ssh: 22001
     user: vagrant
-    upload_url_path:
-    upload_path:
+    restrict: false
   staging:
     ip: 0.0.0.0
     ports:
       ssh: 22
     user: deploy
     branch: master
-    upload_url_path:
-    upload_path:
+    restrict:
+      user: vpm
+      password: keepout
   production:
     ip: 0.0.0.0
     ports:
       ssh: 22
     user: deploy
     branch: master
-    upload_url_path:
-    upload_path:
+    restrict: false

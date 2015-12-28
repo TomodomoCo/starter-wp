@@ -42,72 +42,23 @@ server {
 	sendfile off;
 
 
-	##################################
-	#                                #
-	#   Rewrites and asset caching   #
-	#                                #
-	##################################
+	################################
+	#  Rewrites and asset caching  #
+	################################
 
 	location / {
 		try_files $uri $uri/ index.php last;
-	}
 
-
-	###################
-	#      Fonts      #
-	###################
-
-	location ~* \.(?:eot|ttf|otf|woff|svg)$ {
-		# Caching
-		<% if @app_stage != "dev" %>
-		expires 120d;
-		add_header Pragma public;
-		add_header Cache-Control "public, must-revalidate, proxy-revalidate";
-		<% else %>
-		expires 0m;
-		add_header Pragma no-cache;
-		add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
+		<% if @app_restrict != false %>
+			auth_basic           "Restricted";
+			auth_basic_user_file <%= @app_deploy_to %>/shared/config/htpasswd;
 		<% end %>
 	}
 
 
-	###################
-	#      Images     #
-	###################
-	location ~* \.(?:ico|gif|jpe?g|png)$ {
-		# Caching
-		<% if @app_stage != "dev" %>
-		expires 7d;
-		add_header Pragma public;
-		add_header Cache-Control "public, must-revalidate, proxy-revalidate";
-		<% else %>
-		expires 0m;
-		add_header Pragma no-cache;
-		add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
-		<% end %>
-	}
-
-	###################
-	#     CSS & JS    #
-	###################
-
-	location ~* \.(?:css|js)$ {
-		# Caching
-		<% if @app_stage != "dev" %>
-		expires 2d;
-		add_header Pragma public;
-		add_header Cache-Control "public, must-revalidate, proxy-revalidate";
-		<% else %>
-		expires 0m;
-		add_header Pragma no-cache;
-		add_header Cache-Control "no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0";
-		<% end %>
-	}
-
-
-	###################
-	#  Error handling #
-	###################
+	####################
+	#  Error handling  #
+	####################
 
 	# Don't log when robots or favicon is accessed or 404'd
 	location = /favicon.ico { access_log off; log_not_found off; }

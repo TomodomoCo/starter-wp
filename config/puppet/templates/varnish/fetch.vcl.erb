@@ -3,11 +3,11 @@
 # Varnish vcl_fetch for this site
 
 # Do not fail to include the if line below, or your rules will become Varnish-global
-if (bereq.http.host ~ "<%= @site_domain %>$" && bereq.http.host != "cacti.<%= @site_domain %>") {
+if ( bereq.http.host ~ "<%= @site_domain %>$" && bereq.http.host != "cacti.<%= @site_domain %>" ) {
 
 	# Cookie handling -- override if you have custom cookies that need to be dynamic
 	# remove all server-sent Set-Cookies.
-	if (!(bereq.url ~ "wp-(login|admin)")) {
+	if ( ! ( bereq.url ~ "wp-(login|admin)" ) ) {
 		unset beresp.http.set-cookie;
 	}
 

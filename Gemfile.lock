@@ -7,6 +7,9 @@ GIT
 GEM
   remote: https://www.rubygems.org/
   specs:
+    breakpoint (2.5.0)
+      sass (~> 3.3)
+      sassy-maps (< 1.0.0)
     capistrano (2.13.5)
       highline
       net-scp (>= 1.0.0)
@@ -26,6 +29,8 @@ GEM
       sass (>= 3.3.0, < 3.5)
     compass-import-once (1.0.5)
       sass (>= 3.2, < 3.5)
+    compass-normalize (1.5)
+      compass (>= 0.12.0)
     compass-rgbapng (0.2.1)
       chunky_png (>= 0.8.0)
       compass (>= 0.10.0)
@@ -47,15 +52,22 @@ GEM
     sass (3.4.20)
     sass-globbing (1.1.1)
       sass (>= 3.1)
+    sassy-maps (0.4.0)
+      sass (~> 3.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  breakpoint
   capistrano (~> 2.13.5)
-  compass
+  compass (>= 1.0.3)
+  compass-normalize
   compass-rgbapng
   oily_png
-  sass (>= 3.2.0)
+  sass (>= 3.4.0)
   sass-globbing
   vpmframe!
+
+BUNDLED WITH
+   1.11.2

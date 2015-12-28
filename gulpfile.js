@@ -3,14 +3,13 @@
  */
 var gulp           = require( 'gulp' ),
     gutil          = require( 'gulp-util' ),
-    autoprefixer   = require( 'gulp-autoprefixer' ),
     compass        = require( 'gulp-compass' ),
     concat         = require( 'gulp-concat' ),
     exec           = require( 'gulp-exec' ),
     imagemin       = require( 'gulp-imagemin' ),
     livereload     = require( 'gulp-livereload' ),
     mainBowerFiles = require( 'main-bower-files' ),
-    minifyCss      = require( 'gulp-minify-css' ),
+    cssnano        = require( 'gulp-cssnano' ),
     plumber        = require( 'gulp-plumber' ),
     uglify         = require( 'gulp-uglify' )
     ;
@@ -65,13 +64,14 @@ gulp.task( 'css', function() {
       bundle_exec: true
     }) )
     .on('error', gutil.log)
-    .pipe( autoprefixer({
-      browser: ['last 2 versions'],
-      cascade: false
-    }) )
-    .pipe( minifyCss({
-      advanced: false,
-      keepSpecialComments: 0
+    .pipe( cssnano({
+      autoprefixer: {
+        browsers: ['last 2 versions'],
+        cascade: false
+      },
+      discardComments: {
+        removeAll: true
+      }
     }) )
     .pipe( gulp.dest( paths.dest.css ) )
     .pipe( livereload() );

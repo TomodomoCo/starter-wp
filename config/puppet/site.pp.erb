@@ -1,11 +1,10 @@
 # Rendered: <%= Time.now.utc %>
 
-
-##################################
-#                                #
-#            Variables           #
-#                                #
-##################################
+######
+##
+##  Variables
+##
+######
 
 $app_stage     = "<%= app_stage %>"
 $app_domain    = "<%= app_domain %>"
@@ -15,41 +14,44 @@ $app_name      = "<%= app_name %>"
 $app_user      = "<%= app_user %>"
 $app_group     = "<%= app_group %>"
 
-# random minute for cron
+##
+# Random minute for cron
+##
 $random_minute = "<%= rand(60) %>"
 
+##
+# Set path to templates
+##
 <%
 config_path  = "/home/deploy/tmp/#{app_name}/#{app_stage}/puppet/templates"
 %>
 $config_path = "/home/deploy/tmp/#{app_name}/#{app_stage}/puppet/templates"
 
 
-##################################
-#                                #
-#          Defines               #
-#                                #
-##################################
+######
+##
+##  Defines
+##
+######
 
-##################################
-#                                #
-#          Cron Job              #
-#                                #
-##################################
-
+##
+# Cron Job
+#
 # Thanks to <http://linuxman.wikispaces.com/Creating+a+cron+job+with+puppet>
 # Call with enable => "false" to delete the job.
+##
 
 define cron_job( $enable = "true", $interval = "daily", $script = "", $package = "" ) {
 	file { "/etc/cron.$interval/$name":
 		content => $script,
+		force   => true,
+		owner   => root,
+		group   => root,
 		ensure  => $enable ? {
 			"false" => absent,
 			default => file,
 		},
-		force   => true,
-		owner   => root,
-		group   => root,
-		mode    => $interval ? {
+		mode => $interval ? {
 			"d"     => 644,
 			default => 755,
 		},
@@ -61,11 +63,9 @@ define cron_job( $enable = "true", $interval = "daily", $script = "", $package =
 }
 
 
-##################################
-#                                #
-# Custom command to set up MySQL #
-#                                #
-##################################
+##
+# Set up a MySQL database
+##
 
 define mysqldb( $user, $password, $host, $grant_to ) {
 	exec { "create-${name}-db":
@@ -83,42 +83,40 @@ define mysqldb( $user, $password, $host, $grant_to ) {
 }
 
 
-#################################################
-#                                               #
-# Custom command to set up Varnish enabled rule #
-#                                               #
-#################################################
+##
+# Set up Varnish rules
+##
 
 define vcl_rules( $app_name, $procedure, $enabled = true ) {
 	exec { "create-${name}-vcl-rules":
-		unless => "/bin/grep 'include \"/etc/varnish/sites/${app_name}/${procedure}.vcl\";' /etc/varnish/sites-${procedure}.vcl",
-		command => "/bin/echo 'include \"/etc/varnish/sites/${app_name}/${procedure}.vcl\";' | /usr/bin/tee -a /etc/varnish/sites-${procedure}.vcl",
+		unless   => "/bin/grep 'include \"/etc/varnish/sites/${app_name}/${procedure}.vcl\";' /etc/varnish/sites-${procedure}.vcl",
+		command  => "/bin/echo 'include \"/etc/varnish/sites/${app_name}/${procedure}.vcl\";' | /usr/bin/tee -a /etc/varnish/sites-${procedure}.vcl",
 		provider => shell,
 	}
 }
 
 
-##################################
-#                                #
-#     Vagrant DNS override       #
-#                                #
-##################################
-
 <% if app_stage == "dev" %>
+######
+##
+##  Vagrant DNS override
+##
+######
+
 file { "/etc/resolv.conf":
-	owner => root,
-	group => root,
-	mode => 644,
+	owner  => root,
+	group  => root,
+	mode   => 644,
 	source => "<%= config_path %>/etc/vagrant_resolv.conf"
 }
 <% end %>
 
 
-##################################
-#                                #
-#          Create groups         #
-#                                #
-##################################
+######
+##
+## Create groups
+##
+######
 
 group { "<%= app_user %>-homerw":
 	ensure => present,
@@ -133,24 +131,24 @@ group { "www-php-loggers":
 }
 
 
-##################################
-#                                #
-#          Create users          #
-#                                #
-##################################
+######
+##
+## Create users
+##
+######
 
 <% if app_stage == "dev" %>
 user { "vagrant":
-	ensure => present,
-	gid => "<%= app_group %>",
-	groups => ["<%= app_user %>-homerw","<%= app_group %>", "www-php-loggers"],
+	ensure     => present,
+	gid        => "<%= app_group %>",
+	groups     => ["<%= app_user %>-homerw", "<%= app_group %>", "www-php-loggers"],
 	membership => minimum,
 }
 <% end %>
 
 user { "www-data":
-	ensure => present,
-	groups => ["<%= app_user %>-homerw"],
+	ensure     => present,
+	groups     => ["<%= app_user %>-homerw"],
 	membership => minimum,
 }
 
@@ -175,16 +173,17 @@ user { "<%= access_user %>":
 <% end %>
 
 
-##################################
-#                                #
-#     Create home directories    #
-#                                #
-##################################
+######
+##
+## Create home directories
+##
+######
 
 file { "/home/<%= app_user %>":
 	ensure => directory,
-	owner => <%= app_user %>,
-	group => <%= app_user %>-homerw,
+	owner  => <%= app_user %>,
+	group  => <%= app_user %>-homerw,
+
 	<% if app_stage == "dev" %>
 	mode => 755,
 	<% else %>
@@ -195,177 +194,188 @@ file { "/home/<%= app_user %>":
 # bin directory
 file { "/home/<%= app_user %>/bin":
 	ensure => directory,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
-	mode => 775,
-}
-
-# TODO split out uploads
-file { "/home/<%= app_user %>/uploads.<%= site_domain %>":
-	ensure => directory,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
-	mode => 775,
+	owner  => <%= app_user %>,
+	group  => <%= app_group %>,
+	mode   => 775,
 }
 
 
-##################################
-#                                #
-#         nginx package          #
-#                                #
-##################################
+######
+##
+##  NGINX
+##
+######
 
 package { "nginx":
 	ensure => installed
 }
 
 
-##################################
-#                                #
-#         nginx configs          #
-#                                #
-##################################
+##
+# NGINX config
+##
 
 file { "/etc/nginx/sites-available/<%= app_name %>":
 	ensure => directory,
-	owner => root,
-	group => root,
-	mode => 755
+	owner  => root,
+	group  => root,
+	mode   => 755
 }
 
 file { "/etc/nginx/sites-available/<%= app_name %>/<%= app_stage %>":
-	owner => root,
-	group => root,
-	mode  => 644,
+	owner   => root,
+	group   => root,
+	mode    => 644,
 	content => template("<%= config_path %>/nginx/default.erb"),
 	require => Package["nginx"],
-	notify => Service["nginx"]
+	notify  => Service["nginx"]
 }
 
 file { "/etc/nginx/sites-enabled/<%= app_name %>-<%= app_stage %>":
-	ensure => symlink,
-	target => "/etc/nginx/sites-available/<%= app_name %>/<%= app_stage %>",
+	ensure  => symlink,
+	target  => "/etc/nginx/sites-available/<%= app_name %>/<%= app_stage %>",
 	require => Package["nginx"],
-	notify => Service["nginx"]
+	notify  => Service["nginx"]
 }
 
 file { "/etc/nginx/sites-enabled/default":
-	ensure => absent
+	ensure => absent,
 }
 
-<% if app_stage == "staging" %>
-# TODO why is this here? should it be !dev?
-file { "/etc/nginx/sites-available/<%= app_name %>/uploads":
-owner => root,
-group => root,
-mode  => 644,
-content => template("<%= config_path %>/nginx/uploads.erb"),
-require => Package["nginx"],
-notify => Service["nginx"]
-}
+<% if app_restrict != false %>
+	##
+	# Add htpasswd, if necessary
+	##
 
-##################################
-#                                #
-#   uploads.<%= app_domain %>    #
-#                                #
-##################################
+	file { [ "<%= app_deploy_to %>/shared", "<%= app_deploy_to %>/shared/config" ]:
+		ensure => directory,
+		mode   => 755
+	}
 
-# TODO modularise this out further
-file { "/etc/nginx/sites-enabled/<%= app_name %>-uploads":
-	ensure => symlink,
-	target => "/etc/nginx/sites-available/<%= app_name %>/uploads",
-	require => Package["nginx"],
-	notify => Service["nginx"]
-}
+	file { "<%= app_deploy_to %>/shared/config/htpasswd":
+		ensure  => "present",
+		content => "<%= app_restrict['user'] %>:{PLAIN}<%= app_restrict['password'] %>",
+		mode    => '0644',
+	}
+<% end %>
+
+<% if app_uploads_dir == true %>
+	##
+	# Uploads subdomain
+	##
+
+	file { "/home/<%= app_user %>/uploads.<%= site_domain %>":
+		ensure => directory,
+		owner  => <%= app_user %>,
+		group  => <%= app_group %>,
+		mode   => 775,
+	}
+
+	##
+	# Only resolve uploads.{site_domain} on non-dev stages
+	##
+	file { "/etc/nginx/sites-available/<%= app_name %>/uploads":
+		owner   => root,
+		group   => root,
+		mode    => 644,
+		content => template("<%= config_path %>/nginx/uploads.erb"),
+		require => Package["nginx"],
+		notify  => Service["nginx"]
+	}
+
+	file { "/etc/nginx/sites-enabled/<%= app_name %>-uploads":
+		ensure  => symlink,
+		target  => "/etc/nginx/sites-available/<%= app_name %>/uploads",
+		require => Package["nginx"],
+		notify  => Service["nginx"]
+	}
 <% end %>
 
 
-##################################
-#                                #
-#       enable the service       #
-#                                #
-##################################
+##
+# Enable NGINX
+##
 
 service { "nginx":
-	ensure => running,
+	ensure     => running,
 	hasrestart => true,
-	require => Package["nginx"],
-	restart => "/usr/sbin/nginx -t && /usr/sbin/service nginx reload"
+	require    => Package["nginx"],
+	restart    => "/usr/sbin/nginx -t && /usr/sbin/service nginx reload"
 }
 
 
-##################################
-#                                #
-#        PHP configuration       #
-#                                #
-##################################
+######
+##
+##  PHP configuration
+##
+######
 
 package { "php5-fpm":
 	ensure => installed
 }
 
 
-##################################
-#                                #
-#    Render the PHP-FPM config   #
-#                                #
-##################################
+##
+# Render the PHP-FPM config
+##
 
-# pool must be after the files it depends on above
 file { "/etc/php5/fpm/pool.d/<%= app_name %>.pool.conf":
-	owner => root,
-	group => root,
-	mode => 644,
-	content => template("<%= config_path %>/php/php5-fpm.pool.conf.erb")
+	owner   => root,
+	group   => root,
+	mode    => 644,
+	content => template("<%= config_path %>/php/php5-fpm.pool.conf.erb"),
 }
+
+
+##
+# Enable PHP-FPM
+##
 
 service { "php5-fpm":
-	ensure => running,
+	ensure    => running,
 	subscribe => [File["/etc/php5/fpm/pool.d/<%= app_name %>.pool.conf"],File["/home/<%= app_user %>/php/log"]],
-	require => Package["php5-fpm"]
+	require   => Package["php5-fpm"],
 }
 
 
-##################################
-#                                #
-#       Set up PHP logging       #
-#                                #
-##################################
+##
+# Set up PHP logging
+##
 
 file { "/home/<%= app_user %>/php":
-	ensure => directory,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
+	ensure  => directory,
+	owner   => <%= app_user %>,
+	group   => <%= app_group %>,
 	require => Package["php5-fpm"]
 }
 
 file { "/home/<%= app_user %>/php/log":
-	ensure => directory,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
+	ensure  => directory,
+	owner   => <%= app_user %>,
+	group   => <%= app_group %>,
 	require => Package["php5-fpm"]
 }
 
 file { "/home/<%= app_user %>/php/sessions":
-	ensure => directory,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
+	ensure  => directory,
+	owner   => <%= app_user %>,
+	group   => <%= app_group %>,
 	require => Package["php5-fpm"]
 }
 
 file { "/home/<%= app_user %>/php/log/<%= app_name %>.access.log":
-	ensure => file,
-	owner => <%= app_user %>,
-	group => <%= app_group %>,
+	ensure  => file,
+	owner   => <%= app_user %>,
+	group   => <%= app_group %>,
 	require => Package["php5-fpm"]
 }
 
 
-##################################
-#                                #
-#            Varnish             #
-#                                #
-##################################
+######
+##
+##  Varnish
+##
+######
 
 package { "varnish":
 	ensure => installed
@@ -374,87 +384,106 @@ package { "varnish":
 <% if app_stage == "dev" %>
 # varnish config file for :80
 file { "/etc/default/varnish":
-	owner => root,
-	group => root,
-	source => "<%= config_path %>/varnish/vagrant/vagrant_etc_default_varnish",
+	owner   => root,
+	group   => root,
+	source  => "<%= config_path %>/varnish/vagrant/vagrant_etc_default_varnish",
 	require => Package["varnish"]
 }
 <% end %>
 
-# prerequisite directories and files for Varnish modular configuration
+
+##
+# Prerequisite directories and files for modular Varnish configuration
+##
+
 file { "/etc/varnish/sites":
 	ensure => directory,
-	owner => root,
-	group => root
+	owner  => root,
+	group  => root
 }
 
 file { "/etc/varnish/sites-recv.vcl":
 	ensure => present,
-	owner => root,
-	group => root
+	owner  => root,
+	group  => root
 }
 
 file { "/etc/varnish/sites-fetch.vcl":
 	ensure => present,
-	owner => root,
-	group => root
+	owner  => root,
+	group  => root
 }
 
 file { "/etc/varnish/sites/<%= app_name %>":
 	ensure => directory,
-	owner => root,
-	group => root
+	owner  => root,
+	group  => root
 }
 
-# drop in this site's varnish configurations
+
+##
+# Drop in this site's Varnish configurations
+##
+
 file { "/etc/varnish/sites/<%= app_name %>/recv.vcl":
-	ensure => file,
-	owner => root,
-	group => root,
+	ensure  => file,
+	owner   => root,
+	group   => root,
 	content => template("<%= config_path %>/varnish/recv.vcl.erb"),
 }
 
 file { "/etc/varnish/sites/<%= app_name %>/fetch.vcl":
-	ensure => file,
-	owner => root,
-	group => root,
+	ensure  => file,
+	owner   => root,
+	group   => root,
 	content => template("<%= config_path %>/varnish/fetch.vcl.erb"),
 }
 
-# now enable those VCLs in the sites-*.vcl files
+
+##
+# Enable VCL rules from the sites-*.vcl files
+##
+
 vcl_rules { "<%= app_name %>-recv":
-	app_name => "<%= app_name %>",
+	app_name  => "<%= app_name %>",
 	procedure => "recv",
-	notify => Service["varnish"]
+	notify    => Service["varnish"]
 }
 
 vcl_rules { "<%= app_name %>-fetch":
-	app_name => "<%= app_name %>",
+	app_name  => "<%= app_name %>",
 	procedure => "fetch",
-	notify => Service["varnish"]
+	notify    => Service["varnish"]
 }
 
-# start varnish
+
+##
+# Start Varnish
+##
+
 service { "varnish":
-	ensure => running,
+	ensure  => running,
 	require => Package["varnish"],
+
 	<% if app_stage == "dev" %>
 	subscribe => [File["/etc/default/varnish"]],
 	<% end %>
 }
 
 
+######
+##
+##  Database
+##
+######
 
-##################################
-#                                #
-#    Create DB if not exists     #
-#                                #
-##################################
+##
+# Create DB
+##
 
-# set up database
 mysqldb { "<%= db_name %>":
-	user => "<%= db_user %>",
+	user     => "<%= db_user %>",
 	password => "<%= db_password %>",
-	host => "<%= db_host %>",
+	host     => "<%= db_host %>",
 	grant_to => "<%= db_grant_to %>",
 }

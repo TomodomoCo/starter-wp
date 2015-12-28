@@ -43,6 +43,8 @@ Vagrant.configure("2") do |config|
   app_user         = project['user']
   app_access_users = project['access_users']
   app_group        = project['group']
+  app_restrict     = project['stage'][app_stage]['restrict']
+  app_uploads_dir  = project['uploads_dir']
   site_domain      = project['domain']
 
   # Alternate between different dev URL formats for HTTPS compatibility

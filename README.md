@@ -12,9 +12,26 @@
 
 Add your theme in `public/content/themes/` (or `app/views/`, symlinked to the themes folder)
 
+### Changelog
+
+*   **28 December 2015**
+    *   Basic auth restrictions are now set in project.yml and provisioned by Puppet. If you need to change your auth username/password, you'll need to re-run Puppet.
+    *   Creating an uploads directory is optional, via project.yml. No need to edit the Puppet manifest to remove it.
+    *   Replaced gulp-minify-css with [gulp-cssnano](https://github.com/ben-eb/gulp-cssnano)
+*   **25 December 2015**
+    *   Vagrant comment flipping is no longer required; it now uses manually set UIDs to ensure the right user has access
+    *   Required plugins are automatically installed before Vagrant brings up a box
+    *   Run commands from the working directory within the Vagrant box using `vagrant exec command`
+    *   When running a deploy or Puppet show, vpmframe tries to help determine whether your stage subdomains should be in the format `dev.domain.com` or dev-subdomain.domain.com` to help with SSL cert compatibility. This may not work for international TLDs such as .co.uk!
+    *   The `erb-render` dependency has been removed
+    *   Gulp is now the official asset compilation method of choice. Access it with `npm run gulp`
+    *   Bower is supplied by default. Access it with `npm run bower`
+    *   JS is now indented with 2 spaces, not a 4-character-length tab
+    *   Asset cleaning commands have been moved into Gulp, and the Makefile has been appropriately simplified
+
 ### License
 
-**Copyright (c) 2012-2014, [Van Patten Media](http://www.vanpattenmedia.com/).**
+**Copyright (c) 2012-2015, [Van Patten Media](http://www.vanpattenmedia.com/).**
 
 All rights reserved.
 

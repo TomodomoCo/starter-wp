@@ -21,6 +21,7 @@ set :user,             project['deploy_user']
 set :app_user,         project['user']
 set :app_group,        project['group']
 set :app_access_users, project['access_users']
+set :app_uploads_dir,  project['uploads_dir']
 set :repository,       project['repo']
 set :site_domain,      project['domain']
 set :tmpdir,           Dir.mktmpdir
@@ -60,7 +61,6 @@ after "deploy:setup",
 before "deploy:create_symlink",
   "credentials:upload_db_cred",
   "credentials:upload_s3_cred",
-  "credentials:upload_htpasswd_cred",
   "credentials:symlink_db_cred",
   "salts:symlink_wp_salts"
 

@@ -1,14 +1,15 @@
 {
   "name": "vpmframe-wp",
   "dependencies": {
+    "bower": "*",
     "gulp": "*",
-    "gulp-autoprefixer": "^1.0.0",
+    "gulper": "*",
     "gulp-compass": "*",
     "gulp-concat": "*",
     "gulp-exec": "*",
     "gulp-imagemin": "*",
     "gulp-livereload": "*",
-    "gulp-minify-css": "*",
+    "gulp-cssnano": "*",
     "gulp-plumber": "*",
     "gulp-uglify": "*",
     "gulp-util": "*",
