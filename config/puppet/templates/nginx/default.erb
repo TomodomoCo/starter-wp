@@ -1,7 +1,10 @@
 # Rendered: <%= Time.now.utc %>
 
-# Redirect to WWW on production
 <% if @app_stage == "production" %>
+##
+# Redirect to WWW on production
+##
+
 server {
 	listen 8080;
 
@@ -13,11 +16,11 @@ server {
 
 server {
 
-	##################################
-	#                                #
-	#        Default settings        #
-	#                                #
-	##################################
+	######
+	##
+	##  Default settings
+	##
+	######
 
 	# Error Logging
 	error_log /var/log/nginx/error.log notice;
@@ -42,9 +45,9 @@ server {
 	sendfile off;
 
 
-	################################
-	#  Rewrites and asset caching  #
-	################################
+	##
+	# Rewrites
+	##
 
 	location / {
 		try_files $uri $uri/ index.php last;
@@ -56,9 +59,9 @@ server {
 	}
 
 
-	####################
-	#  Error handling  #
-	####################
+	##
+	# Error handling
+	##
 
 	# Don't log when robots or favicon is accessed or 404'd
 	location = /favicon.ico { access_log off; log_not_found off; }
@@ -72,11 +75,11 @@ server {
 	}
 
 
-	##################################
-	#                                #
-	#      PHP-related settings      #
-	#                                #
-	##################################
+	######
+	##
+	##  PHP-related settings
+	##
+	######
 
 	fastcgi_param  QUERY_STRING       $query_string;
 	fastcgi_param  REQUEST_METHOD     $request_method;

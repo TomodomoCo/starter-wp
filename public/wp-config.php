@@ -45,46 +45,62 @@ if (
 	die();
 }
 
+// Conditionally set the stage separator based on the domain
+if ( substr_count( $project['domain'], '.' ) > 1 )
+	$stageSeparator = '-';
+else
+	$stageSeparator = '.';
+
 /**
  * Setup the dev, staging, and production environments
  */
 $urlParts = explode( '.', $_SERVER['SERVER_NAME'] );
 if ( $urlParts[0] == 'dev' ) {
+
 	/**
 	 * DEV
 	 */
 	define( 'WP_STAGE', $urlParts[0] );
-	define( 'WP_HOME', 'http://' . WP_STAGE . '.' . $project['domain'] );
+	define( 'WP_HOME', 'http://' . WP_STAGE . $stageSeparator . $project['domain'] );
 
 	// Make "private"
 	define( 'WP_ROBOTS_PUBLIC', 0 );
 
 	// Show errors
 	define( 'WP_DEBUG', true );
+
 } elseif ( $urlParts[0] == 'staging' ) {
+
 	/**
 	 * STAGING
 	 */
 	define( 'WP_STAGE', $urlParts[0] );
-	define( 'WP_HOME', 'http://' . WP_STAGE . '.' . $project['domain'] );
+	define( 'WP_HOME', 'http://' . WP_STAGE . $stageSeparator . $project['domain'] );
 
 	// Make "private"
 	define( 'WP_ROBOTS_PUBLIC', 0 );
 
 	// Hide errors
 	define( 'WP_DEBUG', false );
+
 } else {
+
 	/**
 	 * PRODUCTION
 	 */
 	define( 'WP_STAGE', 'production' );
-	define( 'WP_HOME', 'http://www.' . $project['domain'] );
+
+	if ( $stageSeparator === '.' )
+		define( 'WP_HOME', 'http://www.' . $project['domain'] );
+	else
+		define( 'WP_HOME', 'http://' . $project['domain'] );
 
 	// Make public
 	define( 'WP_ROBOTS_PUBLIC', 1 );
 
 	// Hide errors
 	define( 'WP_DEBUG', false );
+
 }
 
 /**
