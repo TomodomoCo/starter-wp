@@ -42,7 +42,7 @@ tbl_prefixes = {}
 
 # argument parsing
 parser = argparse.ArgumentParser(description='Command line arguments')
-parser.add_argument('-d', '--database-config', default='config/database.yml', help='The path to the database.yml file. (Default: %(default)s)')
+parser.add_argument('-d', '--database-config', default='config/credentials/database.yml', help='The path to the database.yml file. (Default: %(default)s)')
 parser.add_argument('-p', '--project-config', default='config/project.yml', help='The path to the project.yml file. (Default: %(default)s)')
 parser.add_argument('--ignore-upload-paths', action='store_true', help='Do not change the upload_path, upload_url_path, siteurl or home after the database is synced. (Default: %(default)s)')
 parser.add_argument('--update-site-paths', action='store_true', help='Update the siteurl and home paths in the database, after it is synced. (Default %(default)s)')

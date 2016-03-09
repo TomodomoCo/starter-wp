@@ -1,0 +1,12 @@
+dev:
+  bucket_name: "some.s3.bucket"
+  access_key: "your_access_key"
+  secret_access_key: "your_secret_access_key"
+staging:
+  bucket_name:
+  access_key:
+  secret_access_key:
+production:
+  bucket_name:
+  access_key:
+  secret_access_key:

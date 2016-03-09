@@ -77,9 +77,8 @@ after "deploy:setup",
 # Upload and symlink DB credentials
 ##
 before "deploy:create_symlink",
-  "credentials:upload_db_cred",
-  "credentials:upload_s3_cred",
-  "credentials:symlink_db_cred",
+  "credentials:upload_credentials",
+  "credentials:symlink_credentials",
   "salts:symlink_wp_salts"
 
 ##

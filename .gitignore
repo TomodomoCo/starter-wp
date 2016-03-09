@@ -1,11 +1,10 @@
-# Ignore things with passwords
-database.yml
-s3.yml
+# Ignore things that should be secure
 wp-salts.php
-config/services/
+config/credentials/
 
 # Compiled files and dependencies
 public/assets/
+public/content/plugins/
 public/content/uploads/
 public/wp/
 vendor/

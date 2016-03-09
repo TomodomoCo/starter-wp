@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
   # Load our YAML configuration
   ##
   project  = YAML.load_file("./config/project.yml")
-  database = YAML.load_file("./config/database.yml")
+  database = YAML.load_file("./config/credentials/database.yml")
 
   ##
   # Set up initial variables

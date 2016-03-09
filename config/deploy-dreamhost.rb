@@ -27,15 +27,19 @@ set :repository,       project['repo']
 set :site_domain,      project['domain']
 set :tmpdir,           Dir.mktmpdir
 
+##
 # Set alerting variables
-set :alerts_hipchat_room, project['alerts']['hipchat']['room']
-set :alerts_hipchat_key,  project['alerts']['hipchat']['key']
+##
+set :alerts_slack_room, project['alerts']['slack']['room']
+set :alerts_slack_hook, project['alerts']['slack']['hook']
 
+##
 # Load vpmframe requirements
-require 'vpmframe/erb-render'
+##
 require 'vpmframe/capistrano/alerts'
 require 'vpmframe/capistrano/assets'
 require 'vpmframe/capistrano/composer'
+require 'vpmframe/capistrano/dreamhost'
 require 'vpmframe/capistrano/puppet'
 require 'vpmframe/capistrano/credentials'
 require 'vpmframe/capistrano/permissions'
@@ -48,13 +52,6 @@ namespace :deploy do
 
   desc "Restart nginx"
   task :restart do
-  end
-end
-
-namespace :wordpress do
-  desc "Copy .htaccess file from previous release"
-  task :copy_htaccess, :except => { :no_release => true } do
-    run "if [ -f #{previous_release}/public/.htaccess ]; then cp -a #{previous_release}/public/.htaccess #{latest_release}/public/.htaccess; fi"
   end
 end
 
@@ -75,7 +72,8 @@ before "deploy",
 
 before "deploy:create_symlink",
   "assets:upload_local_assets",
-  "wordpress:copy_htaccess"
+  "dreamhost:copy_htaccess",
+  "dreamhost:symlink_letsencrypt"
 
 # Install composer dependencies
 after "deploy:update_code",
@@ -88,4 +86,4 @@ before "composer:install",
 after "deploy",
   "deploy:cleanup",
   "assets:local_temp_cleanup",
-  "alerts:hipchat"
+  "alerts:slack"

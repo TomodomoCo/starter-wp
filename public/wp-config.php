@@ -11,7 +11,7 @@ require_once( ABSPATH . '../../vendor/composer/autoload.php' );
 use Symfony\Component\Yaml\Parser;
 $yaml     = new Parser();
 $project  = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/project.yml' ) );
-$database = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/database.yml' ) );
+$database = $yaml->parse( file_get_contents( dirname( __FILE__ ) . './../config/credentials/database.yml' ) );
 
 /**
  * Throw an error if things break

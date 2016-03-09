@@ -6,7 +6,11 @@
 
 1. Install Vagrant, Ruby (we recommend via RVM), and Node w/ npm
 2. Add the Vagrant box
-3. Tweak config files in `config/` (`project.yml`, `database.yml`)
+3. Tweak some config files:
+    + Rename `config/credentials-example/` to `config/credentials/`
+    + `config/project.yml` should contain project-specific settings
+    + `config/credentials/database.example.yml` should be renamed to `database.yml` and contain DB settings
+    + `config/credentials/s3.example.yml` should be renamed to `s3.yml`, if you intend to use the [S3-Uploads](https://github.com/humanmade/S3-Uploads) plugin (we like it and recommend it)
 4. `make install`
 5. `vagrant up`
 
@@ -14,6 +18,12 @@ Add your theme in `public/content/themes/` (or `app/views/`, symlinked to the th
 
 ### Changelog
 
+*   **9 March 2015**
+    *   We use a `config/credentials/` folder now to store all secure credentials
+    *   Update deploy recipes for credentials folder
+    *   Bump WP version
+    *   Use https repos for Composer
+    *   Disable WordPress' emoji replacement by default
 *   **28 December 2015**
     *   Basic auth restrictions are now set in project.yml and provisioned by Puppet. If you need to change your auth username/password, you'll need to re-run Puppet.
     *   Creating an uploads directory is optional, via project.yml. No need to edit the Puppet manifest to remove it.
