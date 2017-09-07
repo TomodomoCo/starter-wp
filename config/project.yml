@@ -21,16 +21,14 @@ alerts:
     hook:
 
 # Should we create a folder/virtualhost at uploads.{site_domain}?
-uploads_dir: true
+uploads_dir: false
 
 # Deployment stages
 stage:
   dev:
-    ip: 127.0.0.1
+    ip: 10.1.1.0
     ports:
-      http: 15001
-      https: 16001
-      ssh: 22001
+      ssh: 22
     user: vagrant
     restrict: false
   staging:

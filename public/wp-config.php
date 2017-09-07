@@ -54,8 +54,8 @@ else
 /**
  * Setup the dev, staging, and production environments
  */
-$urlParts = explode( '.', $_SERVER['SERVER_NAME'] );
-if ( $urlParts[0] == 'dev' ) {
+$urlParts = explode( $stageSeparator, $_SERVER['SERVER_NAME'] );
+if ( $urlParts[0] === 'dev' ) {
 
 	/**
 	 * DEV
@@ -69,7 +69,7 @@ if ( $urlParts[0] == 'dev' ) {
 	// Show errors
 	define( 'WP_DEBUG', true );
 
-} elseif ( $urlParts[0] == 'staging' ) {
+} elseif ( $urlParts[0] === 'staging' ) {
 
 	/**
 	 * STAGING

@@ -1,9 +1,12 @@
 install:
 	bundle
-	npm install
+	yarn install
 
 assets: install
-	npm run bower install
-	npm run gulp
+	yarn run bower install
+	yarn run gulp
 
-.PHONY: assets
+salts:
+	echo '<?php' > config/wp-salts.php && curl https://api.wordpress.org/secret-key/1.1/salt >> config/wp-salts.php
+
+.PHONY: assets salts

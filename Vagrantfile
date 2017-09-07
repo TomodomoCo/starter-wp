@@ -43,8 +43,8 @@ Vagrant.configure("2") do |config|
   app_user         = project['user']
   app_access_users = project['access_users']
   app_group        = project['group']
-  app_restrict     = project['stage'][app_stage]['restrict']
-  app_uploads_dir  = project['uploads_dir']
+  app_restrict     = project['stage'][app_stage]['restrict'] ||= false
+  app_uploads_dir  = project['uploads_dir'] ||= false
   site_domain      = project['domain']
 
   # Alternate between different dev URL formats for HTTPS compatibility
@@ -56,35 +56,39 @@ Vagrant.configure("2") do |config|
     app_domain = "#{app_stage}." + project['domain']
   end
 
-  app_deploy_to    = "/home/#{app_user}/#{app_domain}"
+  # Set app base
+  app_deploy_to = "/home/#{app_user}/#{app_domain}"
 
-  db_name          = database[app_stage]['name']
-  db_user          = database[app_stage]['user']
-  db_password      = database[app_stage]['password']
-  db_host          = database[app_stage]['host']
-  db_grant_to      = database[app_stage]['grant_to']
+  # Set DB information
+  db_name     = database[app_stage]['name']
+  db_user     = database[app_stage]['user']
+  db_password = database[app_stage]['password']
+  db_host     = database[app_stage]['host']
+  db_grant_to = database[app_stage]['grant_to']
 
-  ##
-  # Set up Vagrant box and configure forwarded ports
-  ##
+  # Set up Vagrant box
   config.vm.box = "vpm_vagrant_jessie_2015-08"
-  config.vm.network :forwarded_port, guest: 80,  host: project['stage'][app_stage]['ports']['http']
-  config.vm.network :forwarded_port, guest: 443, host: project['stage'][app_stage]['ports']['https']
-  config.vm.network :forwarded_port, guest: 22,  host: project['stage'][app_stage]['ports']['ssh']
 
-  ##
+  # Use a private network with the IP pulled from project.yml
+  config.vm.network "private_network", ip: project['stage'][app_stage]['ip']
+
   # Share the path to config files with the VM
-  ##
   config.vm.synced_folder "./config", "/home/deploy/tmp/#{app_name}/#{app_stage}"
 
-  ##
   # Handle creating the synced folder.
   # (Note: using a manual UID for a user that will be created during provisioning)
-  ##
   config.vm.synced_folder ".", "#{app_deploy_to}/current", :owner => 9999
 
   # Make sure `vagrant exec` commands are issued from the right folder
   config.exec.commands "*", directory: "#{app_deploy_to}/current"
+
+  ##
+  # Special VirtualBox configuration settings
+  ##
+  config.vm.provider "virtualbox" do |v|
+    # Enable linked clones
+    v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+  end
 
   ##
   # Start your provisioners!
