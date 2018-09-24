@@ -1,0 +1,10 @@
+{
+  "version": "0.1.0",
+  "command": {
+    "bootstrap": {
+      "scope": "*"
+    }
+  },
+  "packages": [],
+  "lerna": "2.11.0"
+}

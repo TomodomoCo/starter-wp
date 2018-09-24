@@ -1,176 +1,153 @@
 /**
  * Load Gulp and Gulp-adjacent dependencies
  */
-var gulp           = require( 'gulp' ),
-    gutil          = require( 'gulp-util' ),
-    compass        = require( 'gulp-compass' ),
-    concat         = require( 'gulp-concat' ),
-    exec           = require( 'gulp-exec' ),
-    imagemin       = require( 'gulp-imagemin' ),
-    livereload     = require( 'gulp-livereload' ),
-    mainBowerFiles = require( 'main-bower-files' ),
-    cssnano        = require( 'gulp-cssnano' ),
-    plumber        = require( 'gulp-plumber' ),
-    uglify         = require( 'gulp-uglify' )
-    ;
+var gulp           = require('gulp')
+var gutil          = require('gulp-util')
+var concat         = require('gulp-concat')
+var cssnano        = require('gulp-cssnano')
+var imagemin       = require('gulp-imagemin')
+var mainBowerFiles = require('main-bower-files')
+var sass           = require('gulp-sass')
+var sassAssetFuncs = require('node-sass-asset-functions')
+var sassglob       = require('gulp-sass-glob')
+var svgo           = require('gulp-svgo')
+var svgSprite      = require('gulp-svg-sprite')
+var uglify         = require('gulp-uglify')
 
 /**
- * Define paths
+ * Sass to CSS compilation, minification, and prefixing
  */
-var src  = 'app/assets/',
-    dest = 'public/assets/'
-    ;
-
-var paths = {
-  src: {
-    fonts:       src + 'fonts/**/*',
-    images:      src + 'images/**/*',
-    javascripts: src + 'javascripts',
-    sass:        src + 'sass'
-  },
-  dest: {
-    css:         dest + 'css/',
-    fonts:       dest + 'fonts/',
-    images:      dest + 'img/',
-    javascripts: dest + 'js/'
-  }
-};
-
-/**
- * CSS tasks
- */
-gulp.task( 'css', function() {
-
-  return gulp.src( paths.src.sass + '/*.scss' )
-    .pipe( plumber({
-      errorHandler: function (error) {
-        console.log( error.message );
-        this.emit( 'end' );
-      }
-    }) )
-    .pipe( compass({
-      sass:  paths.src.sass,
-      css:   paths.dest.css,
-      image: paths.dest.images,
-      font:  paths.dest.fonts,
-      require: [
-        'breakpoint',
-        'sass-globbing',
-        'compass-normalize'
-      ],
-      import_path: [
-        'vendor/bower_components'
-      ],
-      bundle_exec: true
-    }) )
-    .on('error', gutil.log)
-    .pipe( cssnano({
+gulp.task('css', function() {
+  gulp.src('app/assets/sass/*.scss')
+    .pipe(sassglob())
+    .pipe(sass({
+      functions: sassAssetFuncs({
+        'images_path': 'public/assets/img/',
+        'http_images_path': '/assets/img/',
+        'fonts_path': 'public/assets/fonts/',
+        'http_fonts_path': '/assets/fonts/',
+      }),
+      includePaths: [
+        './vendor/bower_components',
+        './vendor/bower_components/breakpoint-sass/stylesheets'
+      ]
+    }).on('error', sass.logError))
+    .pipe(cssnano({
       autoprefixer: {
         browsers: ['last 2 versions'],
         cascade: false
       },
       discardComments: {
         removeAll: true
-      }
-    }) )
-    .pipe( gulp.dest( paths.dest.css ) )
-    .pipe( livereload() );
-
-} );
+      },
+      zindex: false,
+    }))
+    .pipe(gulp.dest('public/assets/css/'))
+})
 
 /**
- * JavaScript tasks
+ * Font placement
  */
-gulp.task( 'javascripts', function() {
+gulp.task('fonts', function () {
+  gulp.src('app/assets/fonts/**/*')
+    .pipe(gulp.dest('public/assets/fonts/'))
+})
 
+/**
+ * Image minification
+ */
+gulp.task('images', function () {
+  gulp.src('app/assets/images/**/*')
+    .pipe(imagemin({
+      progressive: true,
+      multipass: true
+    }))
+    .pipe(gulp.dest('public/assets/images/'))
+})
+
+/**
+ * Spritify SVGs
+ */
+gulp.task('sprites', function () {
+  gulp.src('app/assets/sprites/**/*.svg')
+    .pipe(svgSprite({
+      mode: {
+        symbol: true
+      }
+    }))
+    .pipe(gulp.dest('public/assets/sprites'))
+})
+
+/**
+ * Handle normal SVGs
+ */
+gulp.task('svg', function () {
+  gulp.src('app/assets/svg/**/*.svg')
+    .pipe(svgo())
+    .pipe(gulp.dest('public/assets/img'))
+})
+
+/**
+ * JavaScript compilation
+ */
+gulp.task('js', function () {
   /**
    * Default function for compiling JS
    *
    * @param source
    * @param filename
    */
-  function compileJavaScripts( source, filename ) {
-    return gulp.src( source )
-             .pipe( concat( filename ) )
-             .on( 'error', gutil.log )
-             .pipe( uglify() )
-             .on( 'error', gutil.log )
-             .pipe( gulp.dest( paths.dest.javascripts ) )
-             .pipe( livereload() )
-             ;
+  function jsCompile(source, filename) {
+    return gulp.src(source)
+      .pipe(concat(filename))
+      .on('error', gutil.log)
+      .pipe(uglify())
+      .on('error', gutil.log)
+      .pipe(gulp.dest('public/assets/js/'))
   }
 
-  /**
-   * libraries.js
-   */
-  compileJavaScripts( mainBowerFiles({
+  // libraries.js
+  jsCompile(mainBowerFiles({
     paths: {
       bowerDirectory: 'vendor/bower_components'
     },
     filter: /\.js$/i
-  }), 'libraries.js' );
+  }), 'libraries.js')
 
-  /**
-   * script.js
-   */
-  compileJavaScripts( [
-    paths.src.javascripts + '/script.js',
-  ], 'script.js' );
-
-} );
+  // script.js
+  jsCompile([
+    'app/assets/javascripts/script.js',
+  ], 'script.js')
+})
 
 /**
- * Images
+ * Watch filesystem for changes
  */
-gulp.task( 'images', function () {
-
-  gulp.src( paths.src.images )
-    .pipe( imagemin({
-      progressive: true,
-      multipass: true
-    }) )
-    .pipe( gulp.dest( paths.dest.images ) )
-    .pipe( livereload() );
-
-} );
-
-/**
- * Clean out compiled static assets
- */
-gulp.task( 'clean', function() {
-
-  gulp.src('').pipe( exec( 'rm -rf <%= options.dest %>', { dest: dest } ) );
-
-} );
-
-/**
- * Watch for changes and automatically reload the browser
- */
-gulp.task( 'watcher', function() {
-
-  // Activate LiveReload's listener
-  livereload.listen();
-
-  // Watch src paths and execute callback tasks as necessary
-  gulp.watch( paths.src.sass + '/**/*',        ['css'] );
-  gulp.watch( paths.src.javascripts + '/**/*', ['js'] );
-  gulp.watch( paths.src.images,                ['images'] );
-
-} );
+gulp.task('watcher', function () {
+  gulp.watch('app/assets/sass/**/*.scss',      ['css'])
+  gulp.watch('app/assets/fonts/**/*',          ['fonts'])
+  gulp.watch('app/assets/images/**/*',         ['images'])
+  gulp.watch('app/assets/javascripts/**/*.js', ['js'])
+  gulp.watch('app/assets/sprites/**/*.svg',    ['sprites'])
+  gulp.watch('app/assets/svg/**/*.svg',        ['svg'])
+})
 
 /**
  * Set up default task
  */
-gulp.task( 'default', [
+gulp.task('default', [
   'images',
-  'javascripts',
-  'css'
-] );
+  'sprites',
+  'svg',
+  'js',
+  'fonts',
+  'css',
+])
 
 /**
  * Set up watch task
  */
-gulp.task( 'watch', [
+gulp.task('watch', [
   'default',
   'watcher'
-] );
+])
