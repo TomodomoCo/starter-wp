@@ -2,6 +2,8 @@
 
 A highly opinionated starter framework for WordPress.
 
+Leverages [Kaiso](https://github.com/TomodomoCo/kaiso) and [Timber](https://github.com/timber/timber) for a more modern, concern-separated approach to WordPress development. Installs [psalm](https://github.com/vimeo/psalm) and [phpcs](https://github.com/squizlabs/PHP_CodeSniffer) for linting and static analysis. Uses [gulp](https://github.com/gulpjs/gulp) as a front-end build system.
+
 ## Usage
 
 Vagrant setup:

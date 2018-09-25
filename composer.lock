@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "98bd2fa99fe7616b20aa6c778dc6088a",
+    "content-hash": "a2383ba8720c0e16b07f63cdc670ab60",
     "packages": [
         {
             "name": "altorouter/altorouter",
@@ -854,16 +854,16 @@
         },
         {
             "name": "timber/timber",
-            "version": "1.7.1",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/timber/timber.git",
-                "reference": "a6a553d70b58d9e1f7c612511b72be60b0e98248"
+                "reference": "2a5b709b5881fdc2e07df6134fbb4ff144280e5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/timber/timber/zipball/a6a553d70b58d9e1f7c612511b72be60b0e98248",
-                "reference": "a6a553d70b58d9e1f7c612511b72be60b0e98248",
+                "url": "https://api.github.com/repos/timber/timber/zipball/2a5b709b5881fdc2e07df6134fbb4ff144280e5c",
+                "reference": "2a5b709b5881fdc2e07df6134fbb4ff144280e5c",
                 "shasum": ""
             },
             "require": {
@@ -874,6 +874,7 @@
                 "upstatement/routes": "0.4"
             },
             "require-dev": {
+                "johnpbloch/wordpress": "4.*",
                 "phpunit/phpunit": "5.7.16",
                 "wpackagist-plugin/advanced-custom-fields": "4.4.*",
                 "wpackagist-plugin/co-authors-plus": "3.2.*"
@@ -911,44 +912,7 @@
                 "timber",
                 "twig"
             ],
-            "time": "2018-05-21T15:00:50+00:00"
-        },
-        {
-            "name": "tomodomo/block-columns",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/TomodomoCo/gutenberg-block-columns.git",
-                "reference": "36b4ee63a3cc606d46b60335f216736415383356"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/TomodomoCo/gutenberg-block-columns/zipball/36b4ee63a3cc606d46b60335f216736415383356",
-                "reference": "36b4ee63a3cc606d46b60335f216736415383356",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.0"
-            },
-            "type": "wordpress-plugin",
-            "extra": {
-                "installer-name": "tomodomo-block-columns"
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Tomodomo",
-                    "email": "hello@tomodomo.co"
-                }
-            ],
-            "description": "Variable-width columns block for Gutenberg",
-            "support": {
-                "source": "https://github.com/TomodomoCo/gutenberg-block-columns/tree/master",
-                "issues": "https://github.com/TomodomoCo/gutenberg-block-columns/issues"
-            },
-            "time": "2018-08-27T15:24:48+00:00"
+            "time": "2018-09-17T17:02:34+00:00"
         },
         {
             "name": "tomodomo/kaiso",
@@ -1000,11 +964,11 @@
         },
         {
             "name": "tomodomo/theme",
-            "version": "dev-dev",
+            "version": "dev-feature/2018",
             "dist": {
                 "type": "path",
-                "url": "./app/themes/tomodomo",
-                "reference": "cda338832f5536bc071e3ddb8133fca99d2d7d04",
+                "url": "./app/themes/base",
+                "reference": "2b7c3bda1d68e552dd6c02edde1d07e689f76b12",
                 "shasum": null
             },
             "require": {
@@ -1012,10 +976,10 @@
             },
             "type": "wordpress-theme",
             "extra": {
-                "installer-name": "tomodomo"
+                "installer-name": "base"
             },
             "license": [
-                "proprietary"
+                "MIT"
             ],
             "authors": [
                 {
@@ -1023,7 +987,7 @@
                     "email": "hello@tomodomo.co"
                 }
             ],
-            "description": "Tomodomo website theme"
+            "description": "Base theme"
         },
         {
             "name": "twig/twig",
@@ -1165,15 +1129,15 @@
         },
         {
             "name": "wpackagist-plugin/gutenberg",
-            "version": "3.8.0",
+            "version": "3.9.0",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/gutenberg/",
-                "reference": "tags/3.8.0"
+                "reference": "tags/3.9.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/gutenberg.3.8.0.zip",
+                "url": "https://downloads.wordpress.org/plugin/gutenberg.3.9.0.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -1185,15 +1149,15 @@
         },
         {
             "name": "wpackagist-plugin/wordpress-seo",
-            "version": "8.2",
+            "version": "8.3",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/wordpress-seo/",
-                "reference": "tags/8.2"
+                "reference": "tags/8.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/wordpress-seo.8.2.zip",
+                "url": "https://downloads.wordpress.org/plugin/wordpress-seo.8.3.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -1318,20 +1282,6 @@
             "time": "2017-12-06T16:27:17+00:00"
         },
         {
-            "name": "deliciousbrains-plugin/wp-migrate-db-pro",
-            "version": "1.8.3",
-            "dist": {
-                "type": "zip",
-                "url": "https://api.deliciousbrains.com/?wc-api=delicious-brains&request=composer_download&package=wp-migrate-db-pro&version=1.8.3&composer_key=6B50E72FA00FCE3A440C632FB3E354A0",
-                "reference": null,
-                "shasum": null
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "wordpress-plugin"
-        },
-        {
             "name": "giacocorsiglia/wordpress-stubs",
             "version": "v4.9.8",
             "source": {
@@ -1426,16 +1376,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.0.3",
+            "version": "v4.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "bd088dc940a418f09cda079a9b5c7c478890fb8d"
+                "reference": "fa6ee28600d21d49b2b4e1006b48426cec8e579c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bd088dc940a418f09cda079a9b5c7c478890fb8d",
-                "reference": "bd088dc940a418f09cda079a9b5c7c478890fb8d",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/fa6ee28600d21d49b2b4e1006b48426cec8e579c",
+                "reference": "fa6ee28600d21d49b2b4e1006b48426cec8e579c",
                 "shasum": ""
             },
             "require": {
@@ -1473,7 +1423,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2018-07-15T17:25:16+00:00"
+            "time": "2018-09-18T07:03:24+00:00"
         },
         {
             "name": "openlss/lib-array2xml",
@@ -1670,16 +1620,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.3.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "628a481780561150481a9ec74709092b9759b3ec"
+                "reference": "6ad28354c04b364c3c71a34e4a18b629cc3b231e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/628a481780561150481a9ec74709092b9759b3ec",
-                "reference": "628a481780561150481a9ec74709092b9759b3ec",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/6ad28354c04b364c3c71a34e4a18b629cc3b231e",
+                "reference": "6ad28354c04b364c3c71a34e4a18b629cc3b231e",
                 "shasum": ""
             },
             "require": {
@@ -1717,20 +1667,20 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2018-07-26T23:47:18+00:00"
+            "time": "2018-09-23T23:08:17+00:00"
         },
         {
             "name": "vimeo/psalm",
-            "version": "2.0.11",
+            "version": "2.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vimeo/psalm.git",
-                "reference": "3e69a333c9683596ad4a4325e0039374516295a0"
+                "reference": "db3ddaa42cbc81ffb6f9f8290d01c4db6dbbc3e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vimeo/psalm/zipball/3e69a333c9683596ad4a4325e0039374516295a0",
-                "reference": "3e69a333c9683596ad4a4325e0039374516295a0",
+                "url": "https://api.github.com/repos/vimeo/psalm/zipball/db3ddaa42cbc81ffb6f9f8290d01c4db6dbbc3e6",
+                "reference": "db3ddaa42cbc81ffb6f9f8290d01c4db6dbbc3e6",
                 "shasum": ""
             },
             "require": {
@@ -1784,7 +1734,7 @@
                 "inspection",
                 "php"
             ],
-            "time": "2018-08-30T00:54:48+00:00"
+            "time": "2018-09-21T15:35:51+00:00"
         },
         {
             "name": "wimg/php-compatibility",
@@ -1941,15 +1891,15 @@
         },
         {
             "name": "wpackagist-plugin/query-monitor",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/query-monitor/",
-                "reference": "tags/3.1.0"
+                "reference": "tags/3.1.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/query-monitor.3.1.0.zip",
+                "url": "https://downloads.wordpress.org/plugin/query-monitor.3.1.1.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -1984,7 +1934,6 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "tomodomo/kaiso": 20,
-        "tomodomo/block-columns": 20,
         "tomodomo/theme": 20
     },
     "prefer-stable": false,

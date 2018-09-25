@@ -4,7 +4,8 @@
   "type": "project",
   "license": "MIT",
   "config": {
-    "vendor-dir": "vendor/composer"
+    "vendor-dir": "vendor/composer",
+    "sort-packages": true
   },
   "authors": [
     {
@@ -49,13 +50,14 @@
   },
   "require": {
     "php": "^7.1",
-    "symfony/yaml": "~2.0",
     "johnpbloch/wordpress": "^4.9",
-    "wpackagist-plugin/gutenberg": "^3.1.0",
+    "symfony/yaml": "~2.0",
     "timber/timber": "^1.7",
-    "wpackagist-plugin/wordpress-seo": "^8.0",
+    "tomodomo/kaiso": "dev-master",
+    "tomodomo/theme": "*@dev",
     "wpackagist-plugin/co-authors-plus": "^3.3",
-    "tomodomo/kaiso": "dev-master"
+    "wpackagist-plugin/gutenberg": "^3.1.0",
+    "wpackagist-plugin/wordpress-seo": "^8.0"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
