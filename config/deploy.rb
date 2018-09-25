@@ -34,9 +34,9 @@ namespace :deploy do
 end
 
 # Hook our tasks
-after 'deploy:updated', 'build:clone'
-after 'deploy:updated', 'build:build'
-after 'deploy:updated', 'build:upload'
-after 'deploy:updated', 'build:clean'
-after 'deploy:updated', 'credentials:salts'
+after 'deploy:updated',  'build:clone'
+after 'deploy:updated',  'build:build'
+after 'deploy:updated',  'build:upload'
+after 'deploy:updated',  'build:clean'
+after 'deploy:updated',  'credentials:salts'
 after 'deploy:finished', 'alerts:slack'

@@ -1,0 +1,23 @@
+{
+  "name": "tomodomo/theme",
+  "description": "Base theme",
+  "type": "wordpress-theme",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tomodomo",
+      "email": "hello@tomodomo.co"
+    }
+  ],
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "extra": {
+    "installer-name": "base"
+  },
+  "require": {
+    "php": "^7.0"
+  }
+}
