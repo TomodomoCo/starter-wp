@@ -1,23 +1,24 @@
-# Ignore things that should be secure
-wp-salts.php
-config/credentials/
-
 # Compiled files and dependencies
 public/assets/
 public/content/plugins/
+public/content/themes/
 public/content/uploads/
-public/wp/
 vendor/
+node_modules/
+bower_components/
+public/wp/
 
-# Hidden files, cashes, assets, and misc.
+# Hidden files, caches, and misc.
 .sass-cache
 .DS_Store
 cache
 .cache
-node_modules
 .vagrant
-vagrant_nginx_postprocess
-site.pp
-vagrant-custom.rb
-.bundle
 npm-debug.log
+__init__.py
+
+# Credentials
+s3.json
+credentials.json
+config/credentials/
+config/secrets/

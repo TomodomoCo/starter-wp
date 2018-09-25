@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<ruleset name="Tomodomo">
+    <description>Tomodomo's custom PSR-2 based ruleset</description>
+
+    <file>./app/controllers</file>
+    <file>./app/helpers</file>
+    <file>./app/models</file>
+    <file>./app/plugins</file>
+    <file>./app/themes</file>
+
+    <arg name="tab-width" value="4" />
+    <arg value="-colors" />
+    <arg value="p" />
+
+    <rule ref="PSR2" />
+
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="80" />
+            <property name="absoluteLineLimit" value="100" />
+        </properties>
+    </rule>
+
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
+      <type>warning</type>
+    </rule>
+</ruleset>

@@ -1,38 +1,19 @@
-##
-# Set stage
-##
-set :app_stage, "production"
-
-##
 # Load configuration YML
-##
-set :project_yml_path,  "./config/project.yml"
-set :database_yml_path, "./config/database.yml"
+set :project_yml_path, "./config/project.yml"
 project  = YAML.load_file(fetch(:project_yml_path))
-database = YAML.load_file(fetch(:database_yml_path))
 
-##
-# Stage-specific server options
-##
-set :app_server, project['stage'][fetch(:app_stage)]['ip']
-set :app_port,   project['stage'][fetch(:app_stage)]['ports']['ssh']
+set :app_target, "#{project['stage']['production']['ip']}"
+set :app_user, "#{project['stage']['production']['user']}"
+set :app_port, "#{project['stage']['production']['ports']['ssh']}"
 
-server fetch(:app_server), :app, :web, :db, :primary => true
-ssh_options[:port] = fetch(:app_port)
+# Server settings
+server "#{fetch(:app_target)}",
+  roles: [:app],
+  user: "#{fetch(:app_user)}",
+  port: "#{fetch(:app_port)}"
 
-##
-# Stage-specific application info
-##
-set :app_domain,    project['domain']
-set :deploy_to,     "/home/#{fetch(:app_user)}/#{fetch(:app_domain)}"
-set :app_deploy_to, fetch(:deploy_to)
-set :branch,        project['stage'][fetch(:app_stage)]['branch']
-
-##
-# Database info
-##
-set :db_name,     database[fetch(:app_stage)]['name']
-set :db_user,     database[fetch(:app_stage)]['user']
-set :db_password, database[fetch(:app_stage)]['password']
-set :db_host,     database[fetch(:app_stage)]['host']
-set :db_grant_to, database[fetch(:app_stage)]['grant_to']
+# Stage settings
+set :app_domain, "#{project['stage']['production']['domain']}"
+set :branch,     "#{project['stage']['production']['branch']}"
+set :tmp_dir,    "#{project['stage']['production']['deploy_to']}/.tmp"
+set :deploy_to,  "#{project['stage']['production']['deploy_to']}"

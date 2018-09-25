@@ -1,22 +1,31 @@
 {
-  "name": "vpmframe-wp",
-  "dependencies": {
+  "name": "starter-wp",
+  "devDependencies": {
+    "autoprefixer": "*",
     "bower": "*",
-    "gulp": "*",
-    "gulper": "*",
-    "gulp-compass": "*",
+    "gulp": "^3.9.0",
     "gulp-concat": "*",
-    "gulp-exec": "*",
-    "gulp-imagemin": "*",
-    "gulp-livereload": "*",
     "gulp-cssnano": "*",
-    "gulp-plumber": "*",
-    "gulp-uglify": "*",
+    "gulp-imagemin": "*",
+    "gulp-sass": "^2.3.2",
+    "gulp-sass-glob": "^1.0.6",
+    "gulp-svg-sprite": "^1.4.0",
+    "gulp-svgo": "^1.5.4",
+    "gulp-uglify": "^2.0.0",
     "gulp-util": "*",
-    "main-bower-files": "*"
+    "lerna": "^2.11.0",
+    "main-bower-files": "*",
+    "node-sass-asset-functions": "0.*"
   },
   "scripts": {
-    "bower": "bower",
-    "gulp": "gulper"
+    "build": "npx gulp",
+    "dev": "npx gulp watch",
+    "lerna-install": "npx lerna bootstrap",
+    "lerna-build": "npx lerna exec --parallel --bail=false -- npm run build",
+    "lerna-dev": "npx lerna exec --parallel --bail=false -- npm run dev",
+    "phpcs": "./vendor/composer/bin/phpcs",
+    "psalm": "./vendor/composer/bin/psalm",
+    "lint-php": "npm run phpcs; npm run psalm",
+    "postinstall": "npx bower install"
   }
 }

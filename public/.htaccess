@@ -1,1 +1,15 @@
-# Put your rewrite rules in config/puppet/templates/nginx.erb
+RewriteEngine On
+RewriteBase /
+RewriteRule ^(wp-(?!json|content).*)$ wp/$1 [L]
+
+# BEGIN WordPress
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress

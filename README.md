@@ -1,54 +1,50 @@
-## vpmframe-wp
+# starter-wp
 
-**vpmframe-wp** is Van Patten Media Inc.'s opinionated framework for developing and deploying new WordPress websites.
+A highly opinionated starter framework for WordPress.
 
-### Instructions
+Leverages [Kaiso](https://github.com/TomodomoCo/kaiso) and [Timber](https://github.com/timber/timber) for a more modern, concern-separated approach to WordPress development. Installs [psalm](https://github.com/vimeo/psalm) and [phpcs](https://github.com/squizlabs/PHP_CodeSniffer) for linting and static analysis. Uses [gulp](https://github.com/gulpjs/gulp) as a front-end build system.
 
-1. Install Vagrant, Ruby (we recommend via RVM), and Node w/ npm
-2. Add the Vagrant box
-3. Tweak some config files:
-    + Rename `config/credentials-example/` to `config/credentials/`
-    + `config/project.yml` should contain project-specific settings
-    + `config/credentials/database.example.yml` should be renamed to `database.yml` and contain DB settings
-    + `config/credentials/s3.example.yml` should be renamed to `s3.yml`, if you intend to use the [S3-Uploads](https://github.com/humanmade/S3-Uploads) plugin (we like it and recommend it)
-4. `make install`
-5. `vagrant up`
+## Usage
 
-Add your theme in `public/content/themes/` (or `app/views/`, symlinked to the themes folder)
+Vagrant setup:
 
-### Changelog
+1. `git clone [repo]`
+2. `cp -r app/secrets-example app/secrets`
+3. Fill out files in `app/secrets/`
+4. `vagrant up`
 
-*   **9 March 2015**
-    *   We use a `config/credentials/` folder now to store all secure credentials
-    *   Update deploy recipes for credentials folder
-    *   Bump WP version
-    *   Use https repos for Composer
-    *   Disable WordPress' emoji replacement by default
-*   **28 December 2015**
-    *   Basic auth restrictions are now set in project.yml and provisioned by Puppet. If you need to change your auth username/password, you'll need to re-run Puppet.
-    *   Creating an uploads directory is optional, via project.yml. No need to edit the Puppet manifest to remove it.
-    *   Replaced gulp-minify-css with [gulp-cssnano](https://github.com/ben-eb/gulp-cssnano)
-*   **25 December 2015**
-    *   Vagrant comment flipping is no longer required; it now uses manually set UIDs to ensure the right user has access
-    *   Required plugins are automatically installed before Vagrant brings up a box
-    *   Run commands from the working directory within the Vagrant box using `vagrant exec command`
-    *   When running a deploy or Puppet show, vpmframe tries to help determine whether your stage subdomains should be in the format `dev.domain.com` or dev-subdomain.domain.com` to help with SSL cert compatibility. This may not work for international TLDs such as .co.uk!
-    *   The `erb-render` dependency has been removed
-    *   Gulp is now the official asset compilation method of choice. Access it with `npm run gulp`
-    *   Bower is supplied by default. Access it with `npm run bower`
-    *   JS is now indented with 2 spaces, not a 4-character-length tab
-    *   Asset cleaning commands have been moved into Gulp, and the Makefile has been appropriately simplified
+Building the project:
 
-### License
+1. `composer install`
+2. `nvm install && nvm use`
+3. `npm install`
+4. `npm run dev` or `npm run build`
 
-**Copyright (c) 2012-2015, [Van Patten Media](http://www.vanpattenmedia.com/).**
+Linting:
 
-All rights reserved.
++ `npm run lint-php` for both `phpcs` and `psalm`
++ `npm run phpcs` or `./vendor/composer/bin/phpcs`
++ `npm run psalm` or `./vendor/composer/bin/psalm`
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Building plugin dependencies (e.g. for Gutenberg blocks):
 
-*   Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-*   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-*   Neither the name of the organization nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+1. `npm run lerna-install`
+2. `npm run lerna-dev` or `npm run lerna-build`
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+## About Tomodomo
+
+Tomodomo is a creative agency for magazine publishers. We use custom design and technology to speed up your editorial workflow, engage your readers, and build sustainable subscription revenue for your business.
+
+Learn more at [tomodomo.co](https://tomodomo.co) or email us: [hello@tomodomo.co](mailto:hello@tomodomo.co)
+
+## License
+
+© 2018 Van Patten Media Inc. d/b/a Tomodomo.
+
+This project is licensed under the terms of the MIT License, included in `LICENSE.md`.
+
+## Code of Conduct
+
+All open source Tomodomo projects follow a strict code of conduct, included in `CODEOFCONDUCT.md`. We ask that all contributors adhere to the standards and guidelines in that document.
+
+Thank you!

@@ -1,49 +1,35 @@
 # Project information
-name: projectname
-repo: git://github.com/username/projectname.git
-domain: domain.com
+name: starter-wp
+repo: git://github.com/TomodomoCo/starter-wp.git
 
-# Access information
-deploy_user: deploy
-user: projectuser
-group: group
-access_users:
-  - deploy
-  - projectuser
-  - user1
-  - user2
-  - user3
+uploads:
+  - public/assets
 
 # Deploy alerts
 alerts:
   slack:
-    room:
-    hook:
-
-# Should we create a folder/virtualhost at uploads.{site_domain}?
-uploads_dir: false
+    channel: 'activity'
+    webhook: 'https://hooks.slack.com/services/X/X/X'
 
 # Deployment stages
 stage:
   dev:
-    ip: 10.1.1.0
+    ip: 10.1.1.1
     ports:
       ssh: 22
     user: vagrant
-    restrict: false
+    domain: dev.domain.com
   staging:
     ip: 0.0.0.0
     ports:
       ssh: 22
     user: deploy
-    branch: master
-    restrict:
-      user: vpm
-      password: keepout
+    branch: staging
+    domain: staging.domain.com
   production:
     ip: 0.0.0.0
     ports:
       ssh: 22
     user: deploy
-    branch: master
-    restrict: false
+    branch: production
+    domain: domain.com

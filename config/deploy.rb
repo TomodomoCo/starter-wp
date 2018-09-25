@@ -1,115 +1,42 @@
-##
-# Load the project information
-##
+# Load project configuration
 set :project_yml_path, "./config/project.yml"
 project = YAML.load_file(fetch(:project_yml_path))
 
-# Require multistage for local->staging->production deployment...
-require 'capistrano/ext/multistage'
+# General settings
+set :application,   project['name']
+set :repo_url,      project['repo']
+set :use_sudo,      false
+set :keep_releases, 5
 
-# Require tmpdir for local asset compilation
-require 'tmpdir'
+# Directories and such
+set :linked_dirs, ['config/secrets', 'vendor/composer', 'public/content/uploads']
+set :copy_files,  ['public/.htaccess', 'public/.well-known', 'config/wp-salts.php']
+set :build_dir,   Dir.mktmpdir
+set :uploads,     project['uploads']
 
-##
-# Deploy settings
-##
-set :scm,                     :git
-set :git_enable_submodules,   1
-set :stages,                  ["staging", "production"]
-set :default_stage,           "staging"
-default_run_options[:pty]   = true
-ssh_options[:forward_agent] = true
+# Composer settings
+set :composer_install_flags, '--no-interaction --optimize-autoloader'
+SSHKit.config.command_map[:composer] = "composer"
 
-##
-# Set project/app variables
-##
-set :application,      project['name']
-set :app_name,         project['name']
-set :user,             project['deploy_user']
-set :app_user,         project['user']
-set :app_group,        project['group']
-set :app_access_users, project['access_users']
-set :app_uploads_dir,  project['uploads_dir']
-set :repository,       project['repo']
-set :site_domain,      project['domain']
-set :tmpdir,           Dir.mktmpdir
+# Slack notification
+set :slack, {
+  channel: "#{project['alerts']['slack']['channel']}",
+  webhook: "#{project['alerts']['slack']['webhook']}"
+}
 
-##
-# Set alerting variables
-##
-set :alerts_slack_room, project['alerts']['slack']['room']
-set :alerts_slack_hook, project['alerts']['slack']['hook']
-
-##
-# Load vpmframe requirements
-##
-require 'vpmframe/capistrano/assets'
-require 'vpmframe/capistrano/composer'
-require 'vpmframe/capistrano/puppet'
-require 'vpmframe/capistrano/credentials'
-require 'vpmframe/capistrano/permissions'
-require 'vpmframe/capistrano/wp-salts'
-
-##
-# Override native Capistrano tasks
-##
+# Override restart tasks
 namespace :deploy do
-  task :finalize_update do transaction do end end
-  task :migrate do end
-
-  desc "Restart nginx"
-  task :restart do
-    run "#{sudo} nginx -s reload"
+  after :restart, :clear_cache do
+    on roles(:app), in: :groups, limit: 3, wait: 10 do
+      # This space left intentionally blank
+    end
   end
 end
 
-##
-# Setup related tasks
-##
-before "deploy:setup",
-  "puppet:show"
-
-after "deploy:setup",
-  "permissions:fix_setup_ownership",
-  "salts:generate_wp_salts"
-
-##
-# Upload and symlink DB credentials
-##
-before "deploy:create_symlink",
-  "credentials:upload_credentials",
-  "credentials:symlink_credentials",
-  "salts:symlink_wp_salts"
-
-##
-# Compile and upload assets
-##
-before "deploy",
-  "assets:local_temp_clone",
-  "assets:compile_local_assets"
-
-before "deploy:create_symlink",
-  "assets:upload_local_assets"
-
-##
-# Install composer dependencies
-##
-after "deploy:update_code",
-  "composer:install"
-
-before "composer:install",
-  "composer:copy_vendors"
-
-##
-# Fix ownership
-##
-before "deploy:restart",
-  "permissions:fix_deploy_ownership"
-
-##
-# Cleanup
-##
-after "deploy",
-  "deploy:cleanup",
-  "assets:local_temp_cleanup",
-  "alerts:slack"
+# Hook our tasks
+after 'deploy:updated',  'build:clone'
+after 'deploy:updated',  'build:build'
+after 'deploy:updated',  'build:upload'
+after 'deploy:updated',  'build:clean'
+after 'deploy:updated',  'credentials:salts'
+after 'deploy:finished', 'alerts:slack'

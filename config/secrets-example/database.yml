@@ -1,23 +1,18 @@
 dev:
   name: dev
-  user: dev
-  password: dev
+  user: root
+  password: root
   host: localhost
-  grant_to: localhost
   tbl_prefix: wp_
-
 staging:
   name:
   user:
   password:
-  host:
-  grant_to: localhost
+  host: localhost
   tbl_prefix: wp_
-
 production:
   name:
   user:
   password:
-  host:
-  grant_to: localhost
+  host: localhost
   tbl_prefix: wp_
