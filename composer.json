@@ -53,7 +53,7 @@
     "tomodomo/kaiso": "dev-master",
     "tomodomo/bootstrap": "*@dev",
     "wpackagist-plugin/co-authors-plus": "^3.3",
-    "wpackagist-plugin/wordpress-seo": "^9.0"
+    "wpackagist-plugin/wordpress-seo": "^10.0"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
@@ -63,10 +63,10 @@
     "squizlabs/php_codesniffer": "^3.2",
     "vimeo/psalm": "^2.0",
     "wpackagist-plugin/better-search-replace": "^1.3",
-    "wpackagist-plugin/debug-bar": "^0.9.0",
-    "wpackagist-plugin/debug-bar-timber": "^0.3.0",
+    "wpackagist-plugin/debug-bar": "^1.0",
+    "wpackagist-plugin/debug-bar-timber": "^0.3",
     "wpackagist-plugin/query-monitor": "^3.0",
-    "wpackagist-plugin/wp-mail-logging": "^1.8.3"
+    "wpackagist-plugin/wp-mail-logging": "^1.8"
   },
   "extra": {
     "wordpress-install-dir": "public/wp",
