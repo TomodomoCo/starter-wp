@@ -28,6 +28,9 @@
     "svgxuse": "^1.2.6",
     "webpack-stream": "^5.1.1"
   },
+  "dependencies": {
+    "lodash": "^4.17.11"
+  },
   "scripts": {
     "build": "npx gulp --env=production",
     "dev": "npx gulp watch --env=dev",
@@ -38,8 +41,5 @@
     "phpcs": "./build/composer/bin/phpcs",
     "psalm": "./build/composer/bin/psalm",
     "lint-php": "npm run phpcs; npm run psalm"
-  },
-  "dependencies": {
-    "lodash": "^4.17.11"
   }
 }
