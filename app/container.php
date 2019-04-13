@@ -12,11 +12,12 @@ $app->container['context'] = function ($container) {
     return $context;
 };
 
+// Allow accessing the current user
 $app->container['user'] = function ($container) {
     return $container['context']['user'] ?? null;
 };
 
+// Add an instance of Twig
 $app->container['twig'] = function ($container) {
-    // Cheating a bit, wrapping Timber
     return new Twig($container);
 };

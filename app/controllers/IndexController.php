@@ -2,19 +2,18 @@
 
 namespace Tomodomo\Controllers;
 
+use GuzzleHttp\Psr7\Request;
+
 class IndexController extends BaseController
 {
     /**
-     * Handle GET requests to this route
+     * @param Request  $request
+     * @param Response $response
+     * @param array    $args
      *
-     * @path /
-     *
-     * @param \GuzzleHttp\Psr7\Request $request
-     * @param null $response
-     * @param array $args
      * @return string
      */
-    public function get($request, $response, $args)
+    public function get(Request $request, $response, array $args) : string
     {
         return $this->twig->compile('index.twig');
     }

@@ -2,16 +2,17 @@
 
 namespace Tomodomo\Helpers;
 
+use Pimple\Container;
 use Timber;
 
 class Twig
 {
     /**
-     * @param \Pimple\Container
+     * @param Container
      *
      * @return void
      */
-    public function __construct($container)
+    public function __construct(Container $container) : void
     {
         $this->container = $container;
 
@@ -26,7 +27,7 @@ class Twig
      *
      * @return string
      */
-    public function compile($template, $context = [])
+    public function compile($template, array $context = []) : string
     {
         // Build the context settings
         $settings = array_merge(
