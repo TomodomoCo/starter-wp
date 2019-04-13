@@ -24,7 +24,7 @@ Update
 
 # Install packages
 sudo apt-get install -y --force-yes apache2 mysql-server-5.6 git-core
-sudo apt-get install -y --force-yes php7.1-common php7.1-dev php7.1-json php7.1-opcache php7.1-cli libapache2-mod-php7.1 php7.1 php7.1-mysql php7.1-fpm php7.1-curl php7.1-gd php7.1-mcrypt php7.1-mbstring php7.1-bcmath php7.1-zip php7.1-xdebug php7.1-xml php7.1-soap
+sudo apt-get install -y --force-yes php7.3 php7.3-bcmath php7.3-cli php7.3-common php7.3-curl php7.3-dev php7.3-fpm php7.3-gd php7.3-json php7.3-mbstring php7.3-mysql php7.3-opcache php7.3-soap php7.3-xdebug php7.3-xml php7.3-zip libapache2-mod-php7.3
 
 # Run updates again
 Update
@@ -36,8 +36,8 @@ sudo mkdir /home/vagrant/phpmyadmin
 sudo mkdir /home/vagrant/webgrind
 
 # PHP config
-cat /home/vagrant/${APP_DOMAIN}/current/config/vagrant/php.ini > /etc/php/7.1/apache2/php.ini
-cat /home/vagrant/${APP_DOMAIN}/current/config/vagrant/xdebug.ini > /etc/php/7.1/mods-available/xdebug.ini
+cat /home/vagrant/${APP_DOMAIN}/current/config/vagrant/php.ini > /etc/php/7.3/apache2/php.ini
+cat /home/vagrant/${APP_DOMAIN}/current/config/vagrant/xdebug.ini > /etc/php/7.3/mods-available/xdebug.ini
 
 # Apache config
 sudo a2enmod rewrite
@@ -85,13 +85,15 @@ EOF
 # Enable the new site config
 sudo a2dissite 000-default.conf
 sudo a2ensite default.conf
+sudo a2enmod proxy_fcgi setenvif
+sudo a2enconf php7.3-fpm
 
 # Add custom port for PHPmyAdmin and webgrind
 sudo echo 'Listen 1234' >> /etc/apache2/ports.conf
 sudo echo 'Listen 4321' >> /etc/apache2/ports.conf
 
 # Apache restart
-sudo service php7.1-fpm restart
+sudo service php7.3-fpm restart
 sudo service apache2 restart
 
 # Install Composer
