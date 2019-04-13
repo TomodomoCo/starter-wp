@@ -20,8 +20,8 @@ Vagrant.configure("2") do |config|
 
   # VirtualBox config
   config.vm.provider :virtualbox do |v|
-	# Give our box enough memory
-	v.memory = 1024
+    # Give our box enough memory
+    v.memory = 1024
 
     # Linked clone support
     v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
