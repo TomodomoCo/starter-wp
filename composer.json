@@ -50,10 +50,11 @@
     "roave/security-advisories": "dev-master",
     "symfony/yaml": "~2.0",
     "timber/timber": "^1.7",
-    "tomodomo/kaiso": "dev-master",
     "tomodomo/bootstrap": "*@dev",
+    "tomodomo/kaiso": "dev-master",
     "wpackagist-plugin/co-authors-plus": "^3.3",
-    "wpackagist-plugin/wordpress-seo": "^10.0"
+    "wpackagist-plugin/wordpress-seo": "^10.0",
+    "zendframework/zend-httphandlerrunner": "^1.1"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",

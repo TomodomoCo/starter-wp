@@ -16,7 +16,7 @@ class BaseController
      *
      * @return void
      */
-    public function __construct(Container $container) : void
+    public function __construct(Container $container)
     {
         // Grab the Pimple container
         $this->container = $container;

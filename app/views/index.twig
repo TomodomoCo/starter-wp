@@ -1,0 +1,16 @@
+{% extends 'layouts/base.twig' %}
+
+{% block content %}
+
+{% for post in posts %}
+<article class="post">
+  <header>
+    <h1>{{post.title}}</h1>
+  </header>
+  <div class="post__content">
+    {{post.content}}
+  </div>
+</article>
+{% endfor %}
+
+{% endblock %}

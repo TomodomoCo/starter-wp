@@ -2,7 +2,9 @@
 
 namespace Tomodomo\Controllers;
 
-use GuzzleHttp\Psr7\Request;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Timber\PostQuery as Query;
 
 class IndexController extends BaseController
 {
@@ -13,8 +15,12 @@ class IndexController extends BaseController
      *
      * @return string
      */
-    public function get(Request $request, $response, array $args) : string
+    public function get(RequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
-        return $this->twig->compile('index.twig');
+        $context = [
+            'posts' => new Query(false, '\Tomodomo\Models\Post'),
+        ];
+
+        return $this->twig->render($response, 'index.twig', $context);
     }
 }

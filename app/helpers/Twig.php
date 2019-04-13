@@ -3,6 +3,7 @@
 namespace Tomodomo\Helpers;
 
 use Pimple\Container;
+use Psr\Http\Message\ResponseInterface;
 use Timber;
 
 class Twig
@@ -12,7 +13,7 @@ class Twig
      *
      * @return void
      */
-    public function __construct(Container $container) : void
+    public function __construct(Container $container)
     {
         $this->container = $container;
 
@@ -20,10 +21,10 @@ class Twig
     }
 
     /**
-     * Compile a template
+     * Compile a template.
      *
      * @param string|array $template
-     * @param array $context
+     * @param array        $context
      *
      * @return string
      */
@@ -39,5 +40,23 @@ class Twig
         $template = is_array($template) ? $template : [$template];
 
         return Timber::compile($template, $settings);
+    }
+
+    /**
+     * Compiles a Twig view, adds it to the PSR7 response body stream,
+     * and returns the response. Inspired by Slim Framework's Twig
+     * integration: https://github.com/slimphp/Twig-View
+     *
+     * @param ResponseInterface $response
+     * @param string|array      $template
+     * @param array             $context
+     *
+     * @return ResponseInterface
+     */
+    public function render(ResponseInterface $response, $template, array $context = []) : ResponseInterface
+    {
+        $response->getBody()->write($this->compile($template, $context));
+
+        return $response;
     }
 }
