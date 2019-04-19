@@ -1,10 +1,10 @@
 {
   "name": "@tomodomo/starter-wp",
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "autoprefixer": "^9.3.0",
-    "babel-loader": "^8.0.4",
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "autoprefixer": "^9.5.1",
+    "babel-loader": "^8.0.5",
     "babel-preset-es2015": "^6.24.1",
     "breakpoint-sass": "^2.7.1",
     "eyeglass": "^2.4.1",
@@ -15,7 +15,7 @@
     "gulp-imagemin": "*",
     "gulp-sass": "^4.0.2",
     "gulp-sass-glob": "^1.0.6",
-    "gulp-sourcemaps": "^2.6.4",
+    "gulp-sourcemaps": "^2.6.5",
     "gulp-svg-sprite": "^1.5.0",
     "gulp-svgo": "^1.5.4",
     "gulp-uglify": "^2.0.0",
@@ -23,10 +23,10 @@
     "lerna": "^2.11.0",
     "minimist": "^1.2.0",
     "node-sass-asset-functions": "0.*",
-    "resize-observer-polyfill": "^1.5.0",
+    "resize-observer-polyfill": "^1.5.1",
     "sanitize.css": "^8.0.0",
     "svgxuse": "^1.2.6",
-    "webpack-stream": "^5.1.1"
+    "webpack-stream": "^5.2.1"
   },
   "dependencies": {
     "lodash": "^4.17.11"
