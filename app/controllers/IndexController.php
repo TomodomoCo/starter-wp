@@ -9,11 +9,13 @@ use Timber\PostQuery as Query;
 class IndexController extends BaseController
 {
     /**
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $args
+     * Respond to a GET request on the index.
      *
-     * @return string
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
+     * @param array             $args
+     *
+     * @return ResponseInterface
      */
     public function get(RequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {

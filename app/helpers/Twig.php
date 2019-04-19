@@ -21,7 +21,7 @@ class Twig
     }
 
     /**
-     * Compile a template.
+     * Compile a template to a string.
      *
      * @param string|array $template
      * @param array        $context
@@ -43,7 +43,7 @@ class Twig
     }
 
     /**
-     * Compiles a Twig view, adds it to the PSR7 response body stream,
+     * Compiles a template, adds it to the PSR7 response body stream,
      * and returns the response. Inspired by Slim Framework's Twig
      * integration: https://github.com/slimphp/Twig-View
      *
