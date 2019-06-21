@@ -14,8 +14,8 @@ public/wp/
 cache
 .cache
 .vagrant
-npm-debug.log
 __init__.py
+*.log
 
 # Credentials
 s3.json
