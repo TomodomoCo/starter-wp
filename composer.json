@@ -51,8 +51,7 @@
     "symfony/yaml": "~2.0",
     "timber/timber": "^1.7",
     "tomodomo/bootstrap": "*@dev",
-    "tomodomo/kaiso": "dev-master",
-    "wpackagist-plugin/co-authors-plus": "^3.3",
+    "tomodomo/kaiso": "dev-develop",
     "wpackagist-plugin/wordpress-seo": "^10.0",
     "zendframework/zend-httphandlerrunner": "^1.1"
   },
