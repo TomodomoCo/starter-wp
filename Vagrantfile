@@ -23,6 +23,10 @@ Vagrant.configure("2") do |config|
     # Give our box enough memory
     v.memory = 1024
 
+    # Experimental fixes for slow VM network speeds
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+
     # Linked clone support
     v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
   end
