@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
   database = YAML.load_file("./config/secrets/database.yml")
 
   # Network
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu/bionic64"
 
   # Do some network configuration
   config.vm.network "private_network", ip: project['stage']['dev']['ip']

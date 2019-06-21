@@ -14,23 +14,23 @@ sudo debconf-set-selections <<< "mysql-server mysql-server/root_password passwor
 sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password root"
 
 # Install some helpful tools
-sudo apt-get install -y --force-yes python-software-properties vim htop curl git
+sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages software-properties-common vim htop curl git
 
 # Add PPAs
 sudo add-apt-repository ppa:ondrej/php
+sudo add-apt-repository ppa:ondrej/apache2
 
 # Run updates again
 Update
 
 # Install packages
-sudo apt-get install -y --force-yes apache2 mysql-server-5.6 git-core
-sudo apt-get install -y --force-yes php7.3 php7.3-bcmath php7.3-cli php7.3-common php7.3-curl php7.3-dev php7.3-fpm php7.3-gd php7.3-json php7.3-mbstring php7.3-mysql php7.3-opcache php7.3-soap php7.3-xdebug php7.3-xml php7.3-zip libapache2-mod-php7.3
+sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages apache2 mysql-server-5.7 git-core
+sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages php7.3 php7.3-bcmath php7.3-cli php7.3-common php7.3-curl php7.3-dev php7.3-fpm php7.3-gd php7.3-json php7.3-mbstring php7.3-mysql php7.3-opcache php7.3-soap php7.3-xdebug php7.3-xml php7.3-zip libapache2-mod-php7.3
 
 # Run updates again
 Update
 
 # Set up the shared folder paths
-sudo ln -fTs /vagrant /home/vagrant/${APP_DOMAIN}/current
 sudo mkdir -p /home/vagrant/logs/apache
 sudo mkdir /home/vagrant/phpmyadmin
 sudo mkdir /home/vagrant/webgrind
@@ -44,11 +44,11 @@ sudo a2enmod rewrite
 
 # Download and "install" phpMyAdmin
 wget -nv -O pma.tar.gz https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-english.tar.gz
-sudo tar -xzvf pma.tar.gz -C /home/vagrant/phpmyadmin --strip-components=1
+sudo tar -xzf pma.tar.gz -C /home/vagrant/phpmyadmin --strip-components=1
 rm pma.tar.gz
 
 wget -nv -O webgrind.tar.gz https://github.com/jokkedk/webgrind/archive/v1.5.0.tar.gz
-sudo tar -xzvf webgrind.tar.gz -C /home/vagrant/webgrind --strip-components=1
+sudo tar -xzf webgrind.tar.gz -C /home/vagrant/webgrind --strip-components=1
 rm webgrind.tar.gz
 
 # Insert our Apache vhost config
@@ -121,9 +121,9 @@ else
 fi
 
 # Fix Apache Permissions/Ownership
-echo "Adjusting Apache user and group to work with Vagrant…"
-apache_envars="/etc/apache2/envvars"
-sudo sed -i.bak '/APACHE_RUN_/d' $apache_envars
-sudo echo "export APACHE_RUN_USER=vagrant" >> $apache_envars
-sudo echo "export APACHE_RUN_GROUP=vagrant" >> $apache_envars
-sudo service apache2 restart
+#echo "Adjusting Apache user and group to work with Vagrant…"
+#apache_envars="/etc/apache2/envvars"
+#sudo sed -i.bak '/APACHE_RUN_/d' $apache_envars
+#sudo echo "export APACHE_RUN_USER=vagrant" >> $apache_envars
+#sudo echo "export APACHE_RUN_GROUP=vagrant" >> $apache_envars
+#sudo service apache2 restart
