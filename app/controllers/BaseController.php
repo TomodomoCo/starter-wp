@@ -2,24 +2,26 @@
 
 namespace Tomodomo\Controllers;
 
+use Pimple\Container;
+
 class BaseController
 {
     /**
-     * @var \Pimple\Container
+     * @var Container
      */
     public $container;
 
     /**
-     * @param \Pimple\Container $container
+     * @param Container $container
      *
      * @return void
      */
-    public function __construct($container)
+    public function __construct(Container $container)
     {
         // Grab the Pimple container
         $this->container = $container;
 
-        // Twig!
+        // Make Twig available for convenience
         $this->twig = $this->container['twig'];
 
         return;

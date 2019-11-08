@@ -2,20 +2,27 @@
 
 namespace Tomodomo\Controllers;
 
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Timber\PostQuery as Query;
+
 class IndexController extends BaseController
 {
     /**
-     * Handle GET requests to this route
+     * Respond to a GET request on the index.
      *
-     * @path /
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
+     * @param array             $args
      *
-     * @param \GuzzleHttp\Psr7\Request $request
-     * @param null $response
-     * @param array $args
-     * @return string
+     * @return ResponseInterface
      */
-    public function get($request, $response, $args)
+    public function get(RequestInterface $request, ResponseInterface $response, array $args) : ResponseInterface
     {
-        return $this->twig->compile('index.twig');
+        $context = [
+            'posts' => new Query(false, '\Tomodomo\Models\Post'),
+        ];
+
+        return $this->twig->render($response, 'index.twig', $context);
     }
 }

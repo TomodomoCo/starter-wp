@@ -1,6 +1,6 @@
 <?php
 
-namespace Tomodomo\Theme;
+namespace Tomodomo;
 
 use Tomodomo\Kaiso as App;
 use Timber as Timber;
@@ -17,17 +17,13 @@ Timber::$locations = [
     ABSPATH . '/../../app/views',
 ];
 
-// App settings. So far you only need to provide a controllerPath
-$settings = [
-    'controllerPath'  => '\\Tomodomo\\Controllers\\',
-    'customTemplates' => [],
-];
-
 // Instantiate the app with our settings
+require_once ABSPATH . '/../../app/settings.php';
+
 $app = new App($settings);
 
 // Load up the container
-require_once 'container.php';
+require_once ABSPATH . '/../../app/container.php';
 
 // Run the app!
 $app->run();

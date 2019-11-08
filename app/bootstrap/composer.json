@@ -1,6 +1,6 @@
 {
-  "name": "tomodomo/theme",
-  "description": "Base theme",
+  "name": "tomodomo/bootstrap",
+  "description": "The default Kaiso bootstrap",
   "type": "wordpress-theme",
   "license": "MIT",
   "authors": [
@@ -15,9 +15,10 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "extra": {
-    "installer-name": "base"
+    "installer-name": "bootstrap"
   },
   "require": {
-    "php": "^7.0"
+    "php": "^7.1",
+    "tomodomo/kaiso": "*@dev"
   }
 }
