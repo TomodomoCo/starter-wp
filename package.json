@@ -3,7 +3,7 @@
   "devDependencies": {
     "autoprefixer": "*",
     "bower": "*",
-    "gulp": "^3.9.0",
+    "gulp": "^4.0.2",
     "gulp-concat": "*",
     "gulp-cssnano": "*",
     "gulp-imagemin": "*",
